@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+pydantic
+psycopg2
+psycopg2-binary
+sqlalchemy
+passlib
+bcrypt
+python-jose
+python-multipart
+fastapi-utils
+python-decouple
+boto3
+awscli
