@@ -1,13 +1,20 @@
 from fastapi import FastAPI
 
-app = FastAPI()
+from database import engine
+from documentation.general import *
+from models import user, company
+from routers import auth
 
+app = FastAPI(
+    title="PestWare App API REST",
+    description=description,
+    version=version,
+    terms_of_service=terms_of_service,
+    contact=contact,
+    license_info=license_info
+)
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+user.Base.metadata.create_all(bind=engine)
+company.Base.metadata.create_all(bind=engine)
 
-
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+app.include_router(auth.router)

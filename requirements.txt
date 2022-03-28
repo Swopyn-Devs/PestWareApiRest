@@ -1,14 +1,15 @@
 fastapi
 uvicorn
 pydantic
+email-validator
 psycopg2
 psycopg2-binary
 sqlalchemy
 passlib
-bcrypt
-python-jose
+pyjwt
 python-multipart
 fastapi-utils
 python-decouple
+python-slugify
 boto3
 awscli
