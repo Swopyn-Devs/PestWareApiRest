@@ -7,7 +7,7 @@ SQLALCHEMY_DATABASE_URL = f"postgresql://{config('DB_USERNAME')}:{config('DB_PAS
                           f"{config('DB_HOST')}:{config('DB_PORT')}/{config('DB_DATABASE')}"
 
 engine = create_engine(
-    SQLALCHEMY_DATABASE_URL, echo=True
+    SQLALCHEMY_DATABASE_URL, echo=False
 )
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
