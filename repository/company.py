@@ -48,7 +48,7 @@ def update_document_logo(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'document_logos/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET'), key, logo):
+    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para documentos.')
 
@@ -68,7 +68,7 @@ def update_document_stamp(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'document_stamps/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET'), key, logo):
+    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el sello para documentos.')
 
@@ -88,7 +88,7 @@ def update_web_logo(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'web_logos/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET'), key, logo):
+    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para web.')
 
@@ -112,9 +112,9 @@ def delete(db: Session, company_id: UUID4):
 
 def map_s3_url(company: Company):
     if company.document_logo is not None:
-        company.document_logo = f"{config('AWS_S3_URL')}/{company.document_logo}"
+        company.document_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_logo}"
     if company.document_stamp is not None:
-        company.document_stamp = f"{config('AWS_S3_URL')}/{company.document_stamp}"
+        company.document_stamp = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_stamp}"
     if company.web_logo is not None:
         company.web_logo = f"{config('AWS_S3_URL')}/{company.web_logo}"
 
