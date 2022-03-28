@@ -116,7 +116,7 @@ def map_s3_url(company: Company):
     if company.document_stamp is not None:
         company.document_stamp = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_stamp}"
     if company.web_logo is not None:
-        company.web_logo = f"{config('AWS_S3_URL')}/{company.web_logo}"
+        company.web_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.web_logo}"
 
     return company
 
