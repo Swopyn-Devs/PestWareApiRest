@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from database import engine
 from documentation.general import *
 from models import user, company
-from routers import auth
+from routers import auth, companies
 
 app = FastAPI(
     title="PestWare App API REST",
@@ -18,3 +18,4 @@ user.Base.metadata.create_all(bind=engine)
 company.Base.metadata.create_all(bind=engine)
 
 app.include_router(auth.router)
+app.include_router(companies.router)

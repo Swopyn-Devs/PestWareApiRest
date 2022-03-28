@@ -17,7 +17,7 @@ def create_token(data: dict):
 
 def validate_token(token: str):
     try:
-        decode(token, key=config('SECRET_KEY'), algorithms=[config('ALGORITHM')])
+        return decode(token, key=config('SECRET_KEY'), algorithms=[config('ALGORITHM')])
     except exceptions.DecodeError:
         raise HTTPException(detail='Token invalido.', status_code=status.HTTP_401_UNAUTHORIZED)
     except exceptions.ExpiredSignatureError:
