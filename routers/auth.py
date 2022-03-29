@@ -14,11 +14,11 @@ router = APIRouter(
 
 
 @router.post('/login', response_model=LoginResponse, name=name_login, description=desc_login)
-def login(request: LoginRequest = Depends(), db: Session = Depends(get_db)):
+def login(request: LoginRequest, db: Session = Depends(get_db)):
     return user.login(db, request)
 
 
 @router.post('/register', response_model=CompanyResponse, status_code=status.HTTP_201_CREATED, name=name_register,
              description=desc_register)
-def login(request: RegisterRequest = Depends(), db: Session = Depends(get_db)):
+def login(request: RegisterRequest, db: Session = Depends(get_db)):
     return user.register(db, request)
