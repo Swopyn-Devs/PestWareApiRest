@@ -6,7 +6,7 @@ psycopg2
 psycopg2-binary
 sqlalchemy
 passlib
-pyjwt
+fastapi-jwt-auth
 python-multipart
 fastapi-utils
 python-decouple

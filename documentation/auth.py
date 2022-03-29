@@ -1,5 +1,7 @@
 name_login = 'Iniciar sesión'
 name_register = 'Crear instancia'
+name_profile = 'Obtener Perfil'
+name_refresh = 'Refrescar Token'
 
 desc_login = """
 Todos los recursos son privados, es decir para lograr interactuar con el API es necesario que nuestras solicitudes 
@@ -28,3 +30,7 @@ El proceso de creación de cuenta se divide en los siguientes pasos:
 La **activación de la cuenta** consiste en asignar un período demo (n días) y posterior a ello se deberá realizar
 una contratación por parte del cliente mediante el registro de los datos bancarios en Stripe y una vez validado el pago
 se activara la cuenta de forma permanente a no ser de que sea suspendida o el cliente no decida contratar."""
+
+desc_profile = 'Regresa el objeto "User" relacionado al token de la sesión.'
+desc_refresh = """Estos son tokens de larga duración que se pueden usar para crear nuevos tokens de acceso una vez que
+ haya caducado un token de acceso anterior. Los tokens de actualización no pueden acceder a un recurso protegido."""

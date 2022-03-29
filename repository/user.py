@@ -1,18 +1,20 @@
 import uuid
 
 from fastapi import HTTPException, status
+from fastapi_jwt_auth import AuthJWT
 from pydantic import UUID1
 from slugify import slugify
 from sqlalchemy.orm import Session
 
 from models.company import Company
+from models.employee import Employee
 from models.user import User
-from schemas.auth import LoginRequest, LoginResponse, RegisterRequest
-from utils import jwt
+from schemas.auth import LoginRequest, LoginResponse, RegisterRequest, UserResponse, RefreshTokenResponse
 from utils.hashing import Hash
+from utils.jwt import expires
 
 
-def login(db: Session, request: LoginRequest):
+def login(db: Session, request: LoginRequest, authorize: AuthJWT):
     user = db.query(User).filter(User.email == request.email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='No se encontraron estas credenciales.')
@@ -20,9 +22,10 @@ def login(db: Session, request: LoginRequest):
     if not Hash.verify(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Contraseña invalida.')
 
-    access_token = jwt.create_token(request.dict())
+    access_token = authorize.create_access_token(subject=user.email, expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=user.email, expires_time=expires)
 
-    return LoginResponse(token=access_token, type='bearer')
+    return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
 
 def register(db: Session, request: RegisterRequest):
@@ -67,6 +70,21 @@ def register(db: Session, request: RegisterRequest):
         db.commit()
         db.refresh(new_company)
 
+        # Create employee
+        new_employee = Employee(
+            name=request.contact_name,
+            company_id=new_company.id,
+            job_center_id=new_company.id,
+            job_title_id=new_company.id
+        )
+        db.add(new_employee)
+        db.commit()
+        db.refresh(new_employee)
+
+        user = db.query(User).filter(User.id == new_user.id)
+        user.update({'employee_id': new_employee.id})
+        db.commit()
+
         company = db.query(Company).filter(Company.id == new_company.id)
         company_id = str(new_company.id)
         folio = company_id.split('-')
@@ -88,3 +106,46 @@ def confirmation_code(db: Session, code: UUID1):
 
     user.update({'is_verified': True, 'is_active': True})
     db.commit()
+
+
+def profile(db: Session, authorize: AuthJWT):
+    try:
+        authorize.jwt_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token invalido.')
+
+    current_user = authorize.get_jwt_subject()
+    user = db.query(User).filter(User.email == current_user).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
+
+    employee = db.query(Employee).filter(Employee.id == user.employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
+
+    return UserResponse(
+        id=user.id,
+        name=employee.name,
+        email=user.email,
+        company_id=employee.company_id,
+        job_center_id=employee.job_center_id,
+        job_title_id=employee.job_title_id,
+        employee_id=employee.id,
+        avatar=employee.avatar,
+        signature=employee.signature,
+        color=employee.color,
+        is_verified=user.is_verified,
+        is_active=user.is_active
+    )
+
+
+def refresh(authorize: AuthJWT):
+    try:
+        authorize.jwt_refresh_token_required()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token invalido.')
+
+    current_user = authorize.get_jwt_subject()
+    new_access_token = authorize.create_access_token(subject=current_user, expires_time=expires)
+
+    RefreshTokenResponse(access_token=new_access_token, type='Bearer')
