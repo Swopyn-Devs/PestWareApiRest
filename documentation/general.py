@@ -7,9 +7,10 @@ HTTP y utilizando como estándar de comunicación el formato JSON se establecer�
 
 Las principales funcionalidades  que te ofrece la API de PestWare App se enlistan a continuación:
 
-* **Autenticación por token (JWT)** (_not implemented_).
-* **Gestionar Usuarios y perfiles** (_not implemented_).
-* **Crear Empresas (instancias)** (_not implemented_).
+* **Autenticación por token (JWT)**.
+* **Gestionar Usuarios y perfiles**.
+* **Crear Empresas (instancias)**.
+* **Gestionar Empleados**.
 * **Gestionar Cotizaciones** (_not implemented_).
 * **Gestionar Clientes y Sucursales** (_not implemented_).
 * **Gestionar Ordenes de Servicio** (_not implemented_).

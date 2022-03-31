@@ -8,6 +8,7 @@ from database import get_db
 from documentation.catalogs import *
 from repository import country
 from schemas.catalog import CountryResponse, CountryRequest
+from utils.jwt import oauth2_schema
 
 router = APIRouter(
     prefix='/catalogs/countries',
@@ -28,16 +29,17 @@ async def show(country_id: UUID4, db: Session = Depends(get_db)):
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=CountryResponse,
              name=name_store, description=desc_store)
-async def store(request: CountryRequest, db: Session = Depends(get_db)):
+async def store(request: CountryRequest, db: Session = Depends(get_db), token: str = Depends(oauth2_schema)):
     return country.create(db, request)
 
 
 @router.put('/{country_id}', status_code=status.HTTP_202_ACCEPTED, response_model=CountryResponse,
             name=name_update, description=desc_update)
-async def update(country_id: UUID4, request: CountryRequest, db: Session = Depends(get_db)):
+async def update(country_id: UUID4, request: CountryRequest, db: Session = Depends(get_db),
+                 token: str = Depends(oauth2_schema)):
     return country.update(db, request, country_id)
 
 
 @router.delete('/{country_id}', status_code=status.HTTP_404_NOT_FOUND, name=name_destroy, description=desc_destroy)
-async def destroy(country_id: UUID4, db: Session = Depends(get_db)):
+async def destroy(country_id: UUID4, db: Session = Depends(get_db), token: str = Depends(oauth2_schema)):
     return country.destroy(db, country_id)
