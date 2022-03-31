@@ -17,5 +17,5 @@ class Country(Base):
     symbol_country = Column(String, nullable=False)
     is_active = Column(Boolean, default=True)
     is_deleted = Column(Boolean, default=False)
-    created_at = Column(DateTime, onupdate=datetime.datetime.now)
-    updated_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime, default=datetime.datetime.now())
+    updated_at = Column(DateTime, onupdate=datetime.datetime.now())
