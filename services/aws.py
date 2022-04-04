@@ -17,7 +17,7 @@ def upload_image(bucket, key, file):
             ContentType=file.content_type,
             Body=file.file
         )
-        return ResponseUpload(upload, 'Ok')
+        return ResponseUpload(success=True, message='Ok')
     except Exception as error:
         print(error)
-        return ResponseUpload(False, error)
+        return ResponseUpload(success=False, message=str(error))
