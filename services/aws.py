@@ -1,23 +1,17 @@
 import boto3
-from pydantic import BaseModel
-
-
-class ResponseUpload(BaseModel):
-    success: bool
-    message: str
+from decouple import config
 
 
 def upload_image(bucket, key, file):
     try:
-        s3 = boto3.resource('s3')
+        s3 = boto3.resource('s3', aws_access_key_id=config('AWS_KEY'), aws_secret_access_key=config('AWS_SECRET'))
         bucket = s3.Bucket(bucket)
-        upload = bucket.put_object(
+        return bucket.put_object(
             ACL='public-read',
             Key=key,
             ContentType=file.content_type,
             Body=file.file
         )
-        return ResponseUpload(success=True, message='Ok')
     except Exception as error:
         print(error)
-        return ResponseUpload(success=False, message=str(error))
+        return False
