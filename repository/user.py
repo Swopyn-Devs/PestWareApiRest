@@ -1,5 +1,6 @@
 import uuid
 
+from decouple import config
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import UUID1
@@ -112,6 +113,8 @@ def profile(db: Session, token: str):
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
+    employee = map_s3_url(employee)
+
     return UserResponse(
         id=user.id,
         name=employee.name,
@@ -124,9 +127,20 @@ def profile(db: Session, token: str):
         signature=employee.signature,
         color=employee.color,
         is_verified=user.is_verified,
-        is_active=user.is_active
+        is_active=user.is_active,
+        created_at=employee.created_at,
+        updated_at=employee.updated_at
     )
 
 
 def refresh():
     RefreshTokenResponse(access_token='test', type='Bearer')
+
+
+def map_s3_url(employee: Employee):
+    if employee.avatar is not None:
+        employee.avatar = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.avatar}"
+    if employee.signature is not None:
+        employee.signature = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.signature}"
+
+    return employee

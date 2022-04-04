@@ -1,6 +1,7 @@
 from decouple import config
 from pydantic import BaseModel, EmailStr, UUID4, Field
 from typing import Optional
+from datetime import datetime
 
 from documentation.company import *
 
@@ -54,4 +55,6 @@ class UserResponse(BaseModel):
     color: Optional[str] = None
     is_verified: bool
     is_active: bool
+    created_at: datetime
+    updated_at: datetime
 
