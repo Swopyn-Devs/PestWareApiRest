@@ -48,9 +48,10 @@ def update_document_logo(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'document_logos/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
+    upload = aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo)
+    if not upload.success:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                            detail=f'No fue posible actualizar el logo para documentos.')
+                            detail=f'No fue posible actualizar el logo para documentos. {upload.message}')
 
     company.update({'document_logo': key})
     db.commit()
@@ -68,7 +69,7 @@ def update_document_stamp(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'document_stamps/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
+    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo).success:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el sello para documentos.')
 
@@ -88,7 +89,7 @@ def update_web_logo(db: Session, logo: UploadFile, company_id: UUID4):
 
     # Upload file to AWS S3
     key = f'web_logos/{company_id}.jpeg'
-    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
+    if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo).success:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para web.')
 
