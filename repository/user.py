@@ -1,8 +1,8 @@
 import uuid
 
 from decouple import config
-from fastapi import HTTPException, status, Depends
-from fastapi.security import OAuth2PasswordRequestForm
+from fastapi import HTTPException, status
+from fastapi_jwt_auth import AuthJWT
 from pydantic import UUID1
 from slugify import slugify
 from sqlalchemy.orm import Session
@@ -10,21 +10,21 @@ from sqlalchemy.orm import Session
 from models.company import Company
 from models.employee import Employee
 from models.user import User
-from schemas.auth import LoginResponse, RegisterRequest, UserResponse, RefreshTokenResponse
+from schemas.auth import LoginResponse, LoginRequest, RegisterRequest, UserResponse, RefreshTokenResponse
 from utils.hashing import Hash
-from utils.jwt import create_access_token, get_current_user
+from utils.jwt import expires
 
 
-def login(db: Session, request: OAuth2PasswordRequestForm = Depends()):
-    user = db.query(User).filter(User.email == request.username).first()
+def login(db: Session, request: LoginRequest, authorize: AuthJWT):
+    user = db.query(User).filter(User.email == request.email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='No se encontraron estas credenciales.')
 
     if not Hash.verify(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Contraseña invalida.')
 
-    access_token = create_access_token(user)
-    refresh_token = access_token
+    access_token = authorize.create_access_token(subject=user.email, expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=user.email, expires_time=expires)
 
     return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
@@ -103,17 +103,15 @@ def confirmation_code(db: Session, code: UUID1):
     db.commit()
 
 
-def profile(db: Session, token: str):
-    try:
-        user = get_current_user(db, token)
-    except Exception:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Token invalido.')
+def profile(db: Session, authorize: AuthJWT):
+    current_user = authorize.get_jwt_subject()
+    user = db.query(User).filter(User.email == current_user).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
     employee = db.query(Employee).filter(Employee.id == user.employee_id).first()
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
-
-    employee = map_s3_url(employee)
 
     return UserResponse(
         id=user.id,
@@ -133,8 +131,11 @@ def profile(db: Session, token: str):
     )
 
 
-def refresh():
-    RefreshTokenResponse(access_token='test', type='Bearer')
+def refresh(authorize: AuthJWT):
+    current_user = authorize.get_jwt_subject()
+    new_access_token = authorize.create_access_token(subject=current_user, expires_time=expires)
+
+    RefreshTokenResponse(access_token=new_access_token, type='Bearer')
 
 
 def map_s3_url(employee: Employee):

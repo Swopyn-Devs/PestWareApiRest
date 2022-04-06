@@ -1,5 +1,6 @@
 from decouple import config
 from fastapi import HTTPException, status, UploadFile
+from fastapi_pagination import paginate
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
@@ -14,7 +15,7 @@ def get_all(db: Session):
     for company in companies:
         data.append(map_s3_url(company))
 
-    return data
+    return paginate(data)
 
 
 def retrieve(db: Session, company_id: UUID4):

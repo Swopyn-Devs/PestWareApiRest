@@ -1,24 +1,26 @@
 from decouple import config
 from fastapi import HTTPException, status, UploadFile
+from fastapi_pagination import paginate
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from repository.base import BaseRepo
 from models.employee import Employee
 from schemas.employee import EmployeeRequest
 from services import aws
 
 
 def get_all(db: Session):
-    employees = db.query(Employee).all()
+    employees = BaseRepo.get_all(db, Employee)
     data = []
     for employee in employees:
         data.append(map_s3_url(employee))
 
-    return data
+    return paginate(data)
 
 
 def retrieve(db: Session, employee_id: UUID4):
-    employee = db.query(Employee).filter(Employee.id == employee_id).first()
+    employee = BaseRepo.retrieve_by_id(db, Employee, employee_id)
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'El empleado con el id {employee_id} no está disponible.')
@@ -34,10 +36,7 @@ def create(db: Session, request: EmployeeRequest):
         job_title_id=request.job_title_id,
         color=request.color
     )
-    db.add(new_employee)
-    db.commit()
-    db.refresh(new_employee)
-
+    BaseRepo.create(db, new_employee)
     return new_employee
 
 
