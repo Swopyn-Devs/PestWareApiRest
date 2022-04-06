@@ -113,6 +113,8 @@ def profile(db: Session, authorize: AuthJWT):
     if not employee:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
+    employee = map_s3_url(employee)
+
     return UserResponse(
         id=user.id,
         name=employee.name,
