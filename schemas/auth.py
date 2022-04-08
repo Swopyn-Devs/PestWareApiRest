@@ -58,3 +58,8 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
 
+
+class VerifyAccountRequest(BaseModel):
+    confirmation_code: str = Field(title='Código de confirmación',
+                                   description='El código es enviado por correo al usuario.', max_length=8,
+                                   min_length=8, example='7d19cfe4')

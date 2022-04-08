@@ -1,16 +1,25 @@
 import uuid
 
 from decouple import config
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status, BackgroundTasks
 from fastapi_jwt_auth import AuthJWT
-from pydantic import UUID1
+from fastapi_mail import FastMail, MessageSchema
 from slugify import slugify
 from sqlalchemy.orm import Session
 
 from models.company import Company
 from models.employee import Employee
 from models.user import User
-from schemas.auth import LoginResponse, LoginRequest, RegisterRequest, UserResponse, RefreshTokenResponse
+from schemas.auth import (
+    LoginResponse,
+    LoginRequest,
+    RegisterRequest,
+    RegisterResponse,
+    VerifyAccountRequest,
+    UserResponse,
+    RefreshTokenResponse
+)
+from services import mail
 from utils.hashing import Hash
 from utils.jwt import expires
 
@@ -23,13 +32,19 @@ def login(db: Session, request: LoginRequest, authorize: AuthJWT):
     if not Hash.verify(request.password, user.password):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Contraseña invalida.')
 
+    if not user.is_verified:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Tu cuenta no ha sido verificada.')
+
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Tu cuenta esta suspendida.')
+
     access_token = authorize.create_access_token(subject=user.email, expires_time=expires)
     refresh_token = authorize.create_refresh_token(subject=user.email, expires_time=expires)
 
     return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
 
-def register(db: Session, request: RegisterRequest):
+async def register(db: Session, request: RegisterRequest, background_tasks: BackgroundTasks):
     # validated user
     user = db.query(User).filter(User.email == request.contact_email).first()
     if user:
@@ -44,17 +59,7 @@ def register(db: Session, request: RegisterRequest):
 
     # Generate confirmation code and send by email.
     code = uuid.uuid1()
-
-    new_user = User(
-        email=request.contact_email,
-        password=Hash.bcrypt(request.password),
-        confirmation_code=code,
-        is_verified=True,
-        is_active=True
-    )
-    db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
+    code = str(code).split('-')[0]
 
     # Create instance
     slug = slugify(request.company_name)
@@ -81,9 +86,17 @@ def register(db: Session, request: RegisterRequest):
     db.commit()
     db.refresh(new_employee)
 
-    user = db.query(User).filter(User.id == new_user.id)
-    user.update({'employee_id': new_employee.id})
+    new_user = User(
+        email=request.contact_email,
+        password=Hash.bcrypt(request.password),
+        confirmation_code=code,
+        employee_id=new_employee.id,
+        is_verified=False,
+        is_active=False
+    )
+    db.add(new_user)
     db.commit()
+    db.refresh(new_user)
 
     company = db.query(Company).filter(Company.id == new_company.id)
     company_id = str(new_company.id)
@@ -91,16 +104,37 @@ def register(db: Session, request: RegisterRequest):
     company.update({'folio': folio[0]})
     db.commit()
 
-    return new_company
+    conf = mail.conf
+    data = {'contact_name': request.contact_name, 'confirmation_code': code}
+
+    message = MessageSchema(
+        subject="Confirma tu cuenta",
+        recipients=[request.contact_email],
+        template_body=data,
+        subtype='html'
+    )
+
+    fm = FastMail(conf)
+    background_tasks.add_task(fm.send_message, message, template_name='mail_welcome.html')
+
+    return RegisterResponse(detail='Se ha enviado un código de confirmación a tu cuenta de correo.')
 
 
-def confirmation_code(db: Session, code: UUID1):
-    user = db.query(User).filter(User.confirmation_code == code).first()
-    if not user:
+def verify_account(db: Session, request: VerifyAccountRequest, authorize: AuthJWT):
+    user = db.query(User).filter(User.confirmation_code == request.confirmation_code)
+    if not user.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Código invalido.')
+
+    if user.first().is_verified:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='La cuenta ya esta verificada.')
 
     user.update({'is_verified': True, 'is_active': True})
     db.commit()
+
+    access_token = authorize.create_access_token(subject=user.first().email, expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=user.first().email, expires_time=expires)
+
+    return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
 
 def profile(db: Session, authorize: AuthJWT):

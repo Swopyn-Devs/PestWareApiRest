@@ -8,9 +8,11 @@ psycopg2-binary
 sqlalchemy
 passlib
 fastapi-jwt-auth
+fastapi-mail
 python-multipart
 fastapi-utils
 python-decouple
 python-slugify
 boto3
 awscli
+Jinja2
