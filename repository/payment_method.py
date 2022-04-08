@@ -1,7 +1,5 @@
-from utils.messages import *
+from utils.functions import *
 
-from fastapi import HTTPException, status
-from fastapi_pagination import paginate
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
@@ -10,49 +8,27 @@ from schemas.payment_method import PaymentMethodRequest
 
 model_name = 'método de pago'
 
+
 def get_all(db: Session):
-    return paginate(db.query(PaymentMethod).all())
+    return get_all_data(db, PaymentMethod)
 
 
 def retrieve(db: Session, model_id: UUID4):
-    data = db.query(PaymentMethod).filter(PaymentMethod.id == model_id).first()
-    if not data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=detail_message(model_name, model_id))
-    return data
+    return get_data(db, PaymentMethod, model_id, model_name)
 
 
 def create(db: Session, request: PaymentMethodRequest):
-    data = PaymentMethod(
+    request_data = PaymentMethod(
         name=request.name,
         job_center_id=request.job_center_id,
     )
-    db.add(data)
-    db.commit()
-    db.refresh(data)
-
-    return data
+    insert_data(db, request_data)
+    return request_data
 
 
 def update(db: Session, request: PaymentMethodRequest, model_id: UUID4):
-    data = db.query(PaymentMethod).filter(PaymentMethod.id == model_id)
-    if not data.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=detail_message(model_name, model_id))
-
-    data.update(request.dict())
-    db.commit()
-
-    return data.first()
+    return update_data(db, PaymentMethod, model_id, model_name, request.dict())
 
 
 def delete(db: Session, model_id: UUID4):
-    data = db.query(PaymentMethod).filter(PaymentMethod.id == model_id)
-    if not data.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=detail_message(model_name, model_id))
-
-    data.update({'is_deleted': True})
-    db.commit()
-
-    return {'detail': delete_message(model_name)}
+    return update_delete(db, PaymentMethod, model_id, model_name)
