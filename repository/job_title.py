@@ -1,4 +1,5 @@
 from fastapi import HTTPException, status
+from fastapi_pagination import paginate
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
@@ -7,7 +8,7 @@ from schemas.job_title import JobTitleRequest
 
 
 def get_all(db: Session):
-    return db.query(JobTitle).all()
+    return paginate(db.query(JobTitle).all())
 
 
 def retrieve(db: Session, job_title_id: UUID4):

@@ -1,13 +1,19 @@
+import uuid
+
 from decouple import config
-from fastapi import HTTPException, status, UploadFile
+from fastapi import HTTPException, status, UploadFile, BackgroundTasks
 from fastapi_pagination import paginate
+from fastapi_mail import FastMail, MessageSchema
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from repository.base import BaseRepo
 from models.employee import Employee
+from models.user import User
 from schemas.employee import EmployeeRequest
 from services import aws
+from utils.hashing import Hash
+from services import mail
 
 
 def get_all(db: Session):
@@ -28,7 +34,13 @@ def retrieve(db: Session, employee_id: UUID4):
     return map_s3_url(employee)
 
 
-def create(db: Session, request: EmployeeRequest):
+def create(db: Session, request: EmployeeRequest, background_tasks: BackgroundTasks):
+    # validated user
+    user = db.query(User).filter(User.email == request.email).first()
+    if user:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail='Ya existe una cuenta con este correo.')
+
     new_employee = Employee(
         name=request.name,
         company_id=request.company_id,
@@ -37,6 +49,34 @@ def create(db: Session, request: EmployeeRequest):
         color=request.color
     )
     BaseRepo.create(db, new_employee)
+
+    # Create an account user.
+    password_temp = str(uuid.uuid1()).split('-')[0]
+    new_user = User(
+        email=request.email,
+        password=Hash.bcrypt(password_temp),
+        employee_id=new_employee.id,
+        is_verified=True,
+        is_active=True
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    # Send welcome mail.
+    conf = mail.conf
+    data = {'name': request.name, 'email': request.email, 'password': password_temp}
+
+    message = MessageSchema(
+        subject="Bienvenido a PestWare App",
+        recipients=[request.email],
+        template_body=data,
+        subtype='html'
+    )
+
+    fm = FastMail(conf)
+    background_tasks.add_task(fm.send_message, message, template_name='mail_welcome.html')
+
     return new_employee
 
 

@@ -10,6 +10,7 @@ from schemas.payment_method import PaymentMethodRequest
 
 model_name = 'método de pago'
 
+
 def get_all(db: Session):
     return paginate(db.query(PaymentMethod).all())
 

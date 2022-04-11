@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, UploadFile
+from fastapi import APIRouter, Depends, status, UploadFile, BackgroundTasks
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
@@ -27,9 +27,10 @@ async def show(employee_id: UUID4, db: Session = Depends(get_db), authorize: Aut
 
 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=EmployeeResponse)
-async def store(request: EmployeeRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def store(background_tasks: BackgroundTasks, request: EmployeeRequest, db: Session = Depends(get_db),
+                authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return employee.create(db, request)
+    return employee.create(db, request, background_tasks)
 
 
 @router.put('/{employee_id}', status_code=status.HTTP_202_ACCEPTED, response_model=EmployeeResponse)

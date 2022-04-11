@@ -1,10 +1,11 @@
 from typing import Optional
 
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel, UUID4, EmailStr
 
 
 class EmployeeRequest(BaseModel):
     name: str
+    email: EmailStr
     company_id: UUID4
     job_center_id: UUID4
     job_title_id: UUID4

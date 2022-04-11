@@ -115,7 +115,7 @@ async def register(db: Session, request: RegisterRequest, background_tasks: Back
     )
 
     fm = FastMail(conf)
-    background_tasks.add_task(fm.send_message, message, template_name='mail_welcome.html')
+    background_tasks.add_task(fm.send_message, message, template_name='mail_verify.html')
 
     return RegisterResponse(detail='Se ha enviado un código de confirmación a tu cuenta de correo.')
 

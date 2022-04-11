@@ -1,7 +1,6 @@
-from typing import List
-
 from fastapi import APIRouter, Depends, status
 from fastapi_jwt_auth import AuthJWT
+from fastapi_pagination import Page
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
@@ -15,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get('', status_code=status.HTTP_200_OK, response_model=List[JobTitleResponse])
+@router.get('', status_code=status.HTTP_200_OK, response_model=Page[JobTitleResponse])
 async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return job_title.get_all(db)
