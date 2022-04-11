@@ -17,8 +17,7 @@ router = APIRouter(
 
 
 @router.get('', response_model=List[CountryResponse], name=name_index, description=desc_index)
-async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
+async def index(db: Session = Depends(get_db)):
     return country.get_all(db)
 
 
