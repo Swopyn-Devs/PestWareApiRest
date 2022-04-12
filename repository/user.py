@@ -17,7 +17,8 @@ from schemas.auth import (
     RegisterResponse,
     VerifyAccountRequest,
     UserResponse,
-    RefreshTokenResponse
+    RefreshTokenResponse,
+    ProfileRequest
 )
 from services import mail
 from utils.hashing import Hash
@@ -148,6 +149,53 @@ def profile(db: Session, authorize: AuthJWT):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
     employee = map_s3_url(employee)
+
+    return UserResponse(
+        id=user.id,
+        name=employee.name,
+        email=user.email,
+        company_id=employee.company_id,
+        job_center_id=employee.job_center_id,
+        job_title_id=employee.job_title_id,
+        employee_id=employee.id,
+        avatar=employee.avatar,
+        signature=employee.signature,
+        color=employee.color,
+        is_verified=user.is_verified,
+        is_active=user.is_active,
+        created_at=employee.created_at,
+        updated_at=employee.updated_at
+    )
+
+
+def update(db: Session, request: ProfileRequest, authorize: AuthJWT):
+    current_user = authorize.get_jwt_subject()
+    user = db.query(User).filter(User.email == current_user)
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
+
+    employee = db.query(Employee).filter(Employee.id == user.first().employee_id)
+
+    if request.name is not None:
+        employee.update({'name': request.name})
+        db.commit()
+
+    if request.email is not None:
+        # validated user
+        user_validate = db.query(User).filter(User.email == request.email).filter(User.id != user.first().id).first()
+        if user_validate:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail='Ya existe una cuenta con este correo.')
+        user.update({'email': request.email})
+        db.commit()
+        user = db.query(User).filter(User.email == request.email)
+
+    if request.password is not None:
+        user.update({'password': Hash.bcrypt(request.password)})
+        db.commit()
+
+    user = user.first()
+    employee = employee.first()
 
     return UserResponse(
         id=user.id,

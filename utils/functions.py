@@ -2,8 +2,10 @@ from fastapi import HTTPException, status
 from fastapi_pagination import paginate
 from utils.messages import *
 
+
 def get_all_data(db, model):
     return paginate(db.query(model).all())
+
 
 def insert_data(db, request_data):
     db.add(request_data)

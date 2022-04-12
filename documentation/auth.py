@@ -3,6 +3,7 @@ name_register = 'Crear instancia'
 name_verify = 'Verificar cuenta'
 name_profile = 'Obtener Perfil'
 name_refresh = 'Refrescar Token'
+name_update = 'Actualizar Perfil'
 
 desc_login = """
 Todos los recursos son privados, es decir para lograr interactuar con el API es necesario que nuestras solicitudes 
@@ -36,3 +37,8 @@ desc_profile = 'Regresa el objeto "User" relacionado al token de la sesión.'
 desc_refresh = """Estos son tokens de larga duración que se pueden usar para crear nuevos tokens de acceso una vez que
  haya caducado un token de acceso anterior. Los tokens de actualización no pueden acceder a un recurso protegido."""
 desc_verify = 'Regresa el objeto "User" relacionado al token de la sesión, una vez verificada la cuenta.'
+desc_update = """Regresa el objeto "User" relacionado al token de la sesión, una vez actualizado el perfil la cuenta.
+
+**Nota:** Este servicio permite actualizar de forma parcial cada uno de los atributos del request body.
+Ejemplo: Si el usuario no desea actualizar la contraseña, no se deberá mandar el atributo **password** en el 
+request body."""

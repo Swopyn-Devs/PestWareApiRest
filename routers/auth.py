@@ -12,7 +12,8 @@ from schemas.auth import (
     RegisterResponse,
     VerifyAccountRequest,
     UserResponse,
-    RefreshTokenResponse
+    RefreshTokenResponse,
+    ProfileRequest
 )
 
 router = APIRouter(
@@ -41,6 +42,13 @@ def verify_account(request: VerifyAccountRequest, db: Session = Depends(get_db),
 def profile(authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
     authorize.jwt_required()
     return user.profile(db, authorize)
+
+
+@router.patch('/profile', response_model=UserResponse, status_code=status.HTTP_202_ACCEPTED, name=name_update,
+              description=desc_update)
+def profile(request: ProfileRequest, authorize: AuthJWT = Depends(), db: Session = Depends(get_db)):
+    authorize.jwt_required()
+    return user.update(db, request, authorize)
 
 
 @router.post('/refresh_token', response_model=RefreshTokenResponse, name=name_refresh, description=desc_refresh)

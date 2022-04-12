@@ -59,6 +59,12 @@ class UserResponse(BaseModel):
     updated_at: datetime
 
 
+class ProfileRequest(BaseModel):
+    name: Optional[str] = Field(description='Nombre del usuario.', max_length=255, example=ex_c_name)
+    email: Optional[EmailStr] = Field(description='El correo debe ser único.', example='example@swopyn.com')
+    password: Optional[str] = Field(title='Contraseña', max_length=255, min_length=8, example='1234567890')
+
+
 class VerifyAccountRequest(BaseModel):
     confirmation_code: str = Field(title='Código de confirmación',
                                    description='El código es enviado por correo al usuario.', max_length=8,
