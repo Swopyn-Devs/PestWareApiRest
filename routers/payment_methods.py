@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import payment_method
-from schemas.payment_method import PaymentMethodRequest, PaymentMethodResponse
+from schemas.payment_method import PaymentMethodRequest, PaymentMethodUpdateRequest, PaymentMethodResponse
 
 router = APIRouter(
     prefix='/payment-methods',
@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[PaymentMethodResponse])
 async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return payment_method.get_all(db)
+    return payment_method.get_all(db, authorize)
 
 
 @router.get('/{payment_method_id}', status_code=status.HTTP_200_OK, response_model=PaymentMethodResponse)
@@ -29,11 +29,11 @@ async def show(payment_method_id: UUID4, db: Session = Depends(get_db), authoriz
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=PaymentMethodResponse)
 async def store(request: PaymentMethodRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return payment_method.create(db, request)
+    return payment_method.create(db, request, authorize)
 
 
 @router.put('/{payment_method_id}', status_code=status.HTTP_202_ACCEPTED, response_model=PaymentMethodResponse)
-async def update(payment_method_id: UUID4, request: PaymentMethodRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def update(payment_method_id: UUID4, request: PaymentMethodUpdateRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return payment_method.update(db, request, payment_method_id)
 

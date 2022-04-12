@@ -2,32 +2,34 @@ from utils.functions import *
 
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from fastapi_jwt_auth import AuthJWT
 
 from models.payment_way import PaymentWay
-from schemas.payment_way import PaymentWayRequest
+from schemas.payment_way import PaymentWayRequest, PaymentWayUpdateRequest
 
 model_name = 'forma de pago'
 
 
-def get_all(db: Session):
-    return get_all_data(db, PaymentWay)
+def get_all(db: Session, authorize: AuthJWT):
+    return get_all_data(db, PaymentWay, authorize)
 
 
 def retrieve(db: Session, model_id: UUID4):
     return get_data(db, PaymentWay, model_id, model_name)
 
 
-def create(db: Session, request: PaymentWayRequest):
+def create(db: Session, request: PaymentWayRequest, authorize: AuthJWT):
+    employee = get_employee_id_by_token(db, authorize)
     request_data = PaymentWay(
         name=request.name,
         credit_days=request.credit_days,
-        job_center_id=request.job_center_id,
+        job_center_id=employee.job_center_id,
     )
     insert_data(db, request_data)
     return request_data
 
 
-def update(db: Session, request: PaymentWayRequest, model_id: UUID4):
+def update(db: Session, request: PaymentWayUpdateRequest, model_id: UUID4):
     return update_data(db, PaymentWay, model_id, model_name, request.dict())
 
 

@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import voucher
-from schemas.voucher import VoucherRequest, VoucherResponse
+from schemas.voucher import VoucherRequest, VoucherUpdateRequest, VoucherResponse
 
 router = APIRouter(
     prefix='/vouchers',
@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[VoucherResponse])
 async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return voucher.get_all(db)
+    return voucher.get_all(db, authorize)
 
 
 @router.get('/{voucher_id}', status_code=status.HTTP_200_OK, response_model=VoucherResponse)
@@ -29,11 +29,11 @@ async def show(voucher_id: UUID4, db: Session = Depends(get_db), authorize: Auth
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=VoucherResponse)
 async def store(request: VoucherRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return voucher.create(db, request)
+    return voucher.create(db, request, authorize)
 
 
 @router.put('/{voucher_id}', status_code=status.HTTP_202_ACCEPTED, response_model=VoucherResponse)
-async def update(voucher_id: UUID4, request: VoucherRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def update(voucher_id: UUID4, request: VoucherUpdateRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return voucher.update(db, request, voucher_id)
 
