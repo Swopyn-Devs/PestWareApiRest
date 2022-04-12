@@ -2,9 +2,13 @@ from fastapi import HTTPException, status
 from fastapi_pagination import paginate
 from utils.messages import *
 
+from models.employee import Employee
+from models.user import User
 
-def get_all_data(db, model):
-    return paginate(db.query(model).all())
+
+def get_all_data(db, model, authorize):
+    employee = get_employee_id_by_token(db, authorize)
+    return paginate(db.query(model).filter(model.job_center_id == employee.job_center_id).all())
 
 
 def insert_data(db, request_data):
@@ -38,3 +42,12 @@ def get_data(db, model, model_id, model_name, to_update=False):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail_message(model_name, model_id))
 
     return data
+
+
+def get_employee_id_by_token(db, authorize):
+    current_user = authorize.get_jwt_subject()
+    user = db.query(User).filter(User.email == current_user)
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
+
+    return db.query(Employee).filter(Employee.id == user.first().employee_id).first()
