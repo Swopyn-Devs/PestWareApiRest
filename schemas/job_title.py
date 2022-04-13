@@ -5,6 +5,13 @@ from pydantic import BaseModel, UUID4
 
 class JobTitleRequest(BaseModel):
     name: str
+
+    class Config:
+        orm_mode = True
+
+
+class JobTitleUpdateRequest(BaseModel):
+    name: str
     job_center_id: UUID4
 
     class Config:

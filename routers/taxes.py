@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import tax
-from schemas.tax import TaxRequest, TaxResponse
+from schemas.tax import TaxRequest, TaxUpdateRequest, TaxResponse
 
 router = APIRouter(
     prefix='/taxes',
@@ -17,7 +17,7 @@ router = APIRouter(
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[TaxResponse])
 async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return tax.get_all(db)
+    return tax.get_all(db, authorize)
 
 
 @router.get('/{tax_id}', status_code=status.HTTP_200_OK, response_model=TaxResponse)
@@ -29,11 +29,11 @@ async def show(tax_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT 
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=TaxResponse)
 async def store(request: TaxRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return tax.create(db, request)
+    return tax.create(db, request, authorize)
 
 
 @router.put('/{tax_id}', status_code=status.HTTP_202_ACCEPTED, response_model=TaxResponse)
-async def update(tax_id: UUID4, request: TaxRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def update(tax_id: UUID4, request: TaxUpdateRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return tax.update(db, request, tax_id)
 
