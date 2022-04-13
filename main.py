@@ -12,8 +12,38 @@ from fastapi_pagination import add_pagination
 
 from database import engine
 from documentation.general import *
-from models import user, company, employee, catalog, job_title, tax, payment_way, payment_method, voucher, concept, presentation, type, unit
-from routers import auth, companies, employees, catalogs, job_titles, taxes, payment_ways, payment_methods, vouchers, concepts, presentations, types, units
+from models import (
+    user,
+    company,
+    job_center,
+    employee,
+    catalog,
+    job_title,
+    tax,
+    payment_way,
+    payment_method,
+    voucher,
+    concept,
+    presentation,
+    type,
+    unit
+)
+from routers import (
+    auth,
+    companies,
+    job_centers,
+    employees,
+    catalogs,
+    job_titles,
+    taxes,
+    payment_ways,
+    payment_methods,
+    vouchers,
+    concepts,
+    presentations,
+    types,
+    units
+)
 from schemas.auth import Settings
 from utils.config import *
 
@@ -57,10 +87,12 @@ concept.Base.metadata.create_all(bind=engine)
 presentation.Base.metadata.create_all(bind=engine)
 type.Base.metadata.create_all(bind=engine)
 unit.Base.metadata.create_all(bind=engine)
+job_center.Base.metadata.create_all(bind=engine)
 
 
 app.include_router(auth.router)
 app.include_router(companies.router)
+app.include_router(job_centers.router)
 app.include_router(employees.router)
 app.include_router(catalogs.router)
 app.include_router(job_titles.router)
