@@ -4,3 +4,7 @@ def detail_message(string, id):
 
 def delete_message(string):
     return f'El {string} se eliminó correctamente.'
+
+
+def db_error():
+    return 'Ocurrió un problema, verifique los datos'

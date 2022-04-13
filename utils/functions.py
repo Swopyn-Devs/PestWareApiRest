@@ -12,22 +12,33 @@ def get_all_data(db, model, authorize):
 
 
 def insert_data(db, request_data):
-    db.add(request_data)
-    db.commit()
-    db.refresh(request_data)
+    try:
+        db.add(request_data)
+        db.commit()
+        db.refresh(request_data)
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
 
 
 def update_data(db, model, model_id, model_name, request_data):
-    data = get_data(db, model, model_id, model_name, True)
-    data.update(request_data)
-    db.commit()
+    try:
+        data = get_data(db, model, model_id, model_name, True)
+        data.update(request_data)
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
+
     return data.first()
 
 
 def update_delete(db, model, model_id, model_name):
-    data = get_data(db, model, model_id, model_name, True)
-    data.update({'is_deleted': True})
-    db.commit()
+    try:
+        data = get_data(db, model, model_id, model_name, True)
+        data.update({'is_deleted': True})
+        db.commit()
+    except Exception:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
+
     return {'detail': delete_message(model_name)}
 
 
