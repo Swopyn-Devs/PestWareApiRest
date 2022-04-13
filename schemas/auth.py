@@ -55,8 +55,8 @@ class UserResponse(BaseModel):
     color: Optional[str] = None
     is_verified: bool
     is_active: bool
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
 
 class ProfileRequest(BaseModel):
