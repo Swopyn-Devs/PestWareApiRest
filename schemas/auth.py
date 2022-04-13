@@ -3,6 +3,8 @@ from pydantic import BaseModel, EmailStr, UUID4, Field
 from typing import Optional
 from datetime import datetime
 
+from schemas.job_title import JobTitleResponse
+from schemas.job_center import JobCenterResponse
 from documentation.company import *
 
 
@@ -47,8 +49,8 @@ class UserResponse(BaseModel):
     name: str
     email: EmailStr = Field(title='Correo electrónico', example='example@swopyn.com')
     company_id: UUID4
-    job_center_id: UUID4
-    job_title_id: UUID4
+    job_center: JobCenterResponse
+    job_title: JobTitleResponse
     employee_id: UUID4
     avatar: Optional[str] = None
     signature: Optional[str] = None

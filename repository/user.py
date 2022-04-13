@@ -20,6 +20,8 @@ from schemas.auth import (
     RefreshTokenResponse,
     ProfileRequest
 )
+import repository.job_title as job_title_repo
+import repository.job_center as job_center_repo
 from services import mail
 from utils.hashing import Hash
 from utils.jwt import expires
@@ -149,14 +151,16 @@ def profile(db: Session, authorize: AuthJWT):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
     employee = map_s3_url(employee)
+    job_title = job_title_repo.retrieve(db, employee.job_title_id)
+    job_center = job_center_repo.retrieve(db, employee.job_center_id)
 
     return UserResponse(
         id=user.id,
         name=employee.name,
         email=user.email,
         company_id=employee.company_id,
-        job_center_id=employee.job_center_id,
-        job_title_id=employee.job_title_id,
+        job_center=job_center,
+        job_title=job_title,
         employee_id=employee.id,
         avatar=employee.avatar,
         signature=employee.signature,
@@ -196,14 +200,16 @@ def update(db: Session, request: ProfileRequest, authorize: AuthJWT):
 
     user = user.first()
     employee = employee.first()
+    job_title = job_title_repo.retrieve(db, employee.job_title_id)
+    job_center = job_center_repo.retrieve(db, employee.job_center_id)
 
     return UserResponse(
         id=user.id,
         name=employee.name,
         email=user.email,
         company_id=employee.company_id,
-        job_center_id=employee.job_center_id,
-        job_title_id=employee.job_title_id,
+        job_center=job_center,
+        job_title=job_title,
         employee_id=employee.id,
         avatar=employee.avatar,
         signature=employee.signature,
