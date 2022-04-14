@@ -26,7 +26,11 @@ from models import (
     concept,
     presentation,
     type,
-    unit
+    unit,
+    application_method,
+    infestation_degree,
+    cleaning,
+    plague_category
 )
 from routers import (
     auth,
@@ -42,7 +46,11 @@ from routers import (
     concepts,
     presentations,
     types,
-    units
+    units,
+    application_methods,
+    infestation_degrees,
+    cleaning as r_cleaning,
+    plague_categories
 )
 from schemas.auth import Settings
 from utils.config import *
@@ -88,6 +96,10 @@ presentation.Base.metadata.create_all(bind=engine)
 type.Base.metadata.create_all(bind=engine)
 unit.Base.metadata.create_all(bind=engine)
 job_center.Base.metadata.create_all(bind=engine)
+application_method.Base.metadata.create_all(bind=engine)
+infestation_degree.Base.metadata.create_all(bind=engine)
+cleaning.Base.metadata.create_all(bind=engine)
+plague_category.Base.metadata.create_all(bind=engine)
 
 
 app.include_router(auth.router)
@@ -104,6 +116,10 @@ app.include_router(concepts.router)
 app.include_router(presentations.router)
 app.include_router(types.router)
 app.include_router(units.router)
+app.include_router(application_methods.router)
+app.include_router(infestation_degrees.router)
+app.include_router(r_cleaning.router)
+app.include_router(plague_categories.router)
 
 add_pagination(app)
 
