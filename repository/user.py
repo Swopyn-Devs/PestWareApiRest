@@ -18,7 +18,8 @@ from schemas.auth import (
     VerifyAccountRequest,
     UserResponse,
     RefreshTokenResponse,
-    ProfileRequest
+    ProfileRequest,
+    SendCodeConfirmation
 )
 import repository.job_title as job_title_repo
 import repository.job_center as job_center_repo
@@ -138,6 +139,40 @@ def verify_account(db: Session, request: VerifyAccountRequest, authorize: AuthJW
     refresh_token = authorize.create_refresh_token(subject=user.first().email, expires_time=expires)
 
     return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
+
+
+def send_code_confirmation(db: Session, request: SendCodeConfirmation, background_tasks: BackgroundTasks):
+    user = db.query(User).filter(User.email == request.email)
+    if not user.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró una cuenta con este correo.')
+
+    if user.first().is_verified:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='La cuenta ya esta verificada.')
+
+    employee = db.query(Employee).filter(Employee.id == user.first().employee_id).first()
+    if not employee:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró información de esta cuenta.')
+
+    # Generate confirmation code and send by email.
+    code = uuid.uuid1()
+    code = str(code).split('-')[0]
+    conf = mail.conf
+    data = {'contact_name': employee.name, 'confirmation_code': code}
+
+    user.update({'confirmation_code': code})
+    db.commit()
+
+    message = MessageSchema(
+        subject="Confirma tu cuenta",
+        recipients=[request.email],
+        template_body=data,
+        subtype='html'
+    )
+
+    fm = FastMail(conf)
+    background_tasks.add_task(fm.send_message, message, template_name='mail_verify.html')
+
+    return RegisterResponse(detail='Se ha enviado un código de confirmación a tu cuenta de correo.')
 
 
 def profile(db: Session, authorize: AuthJWT):

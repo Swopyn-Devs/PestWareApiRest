@@ -13,7 +13,8 @@ from schemas.auth import (
     VerifyAccountRequest,
     UserResponse,
     RefreshTokenResponse,
-    ProfileRequest
+    ProfileRequest,
+    SendCodeConfirmation
 )
 
 router = APIRouter(
@@ -36,6 +37,13 @@ async def register(background_tasks: BackgroundTasks, request: RegisterRequest, 
 @router.post('/verify_account', response_model=LoginResponse, name=name_verify, description=desc_verify)
 def verify_account(request: VerifyAccountRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     return user.verify_account(db, request, authorize)
+
+
+@router.post('/resend_confirmation_code', response_model=RegisterResponse, name=name_send_code,
+             description=desc_send_code)
+def resend_confirmation_code(background_tasks: BackgroundTasks, request: SendCodeConfirmation,
+                             db: Session = Depends(get_db)):
+    return user.send_code_confirmation(db, request, background_tasks)
 
 
 @router.get('/profile', response_model=UserResponse, name=name_profile, description=desc_profile)

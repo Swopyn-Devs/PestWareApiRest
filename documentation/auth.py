@@ -1,6 +1,7 @@
 name_login = 'Iniciar sesión'
 name_register = 'Crear instancia'
 name_verify = 'Verificar cuenta'
+name_send_code = 'Reenviar código confirmación'
 name_profile = 'Obtener Perfil'
 name_refresh = 'Refrescar Token'
 name_update = 'Actualizar Perfil'
@@ -37,6 +38,7 @@ desc_profile = 'Regresa el objeto "User" relacionado al token de la sesión.'
 desc_refresh = """Estos son tokens de larga duración que se pueden usar para crear nuevos tokens de acceso una vez que
  haya caducado un token de acceso anterior. Los tokens de actualización no pueden acceder a un recurso protegido."""
 desc_verify = 'Regresa el objeto "User" relacionado al token de la sesión, una vez verificada la cuenta.'
+desc_send_code = 'Reenvía un nuevo código de confirmación para verificar la cuenta de un nuevo usuario.'
 desc_update = """Regresa el objeto "User" relacionado al token de la sesión, una vez actualizado el perfil la cuenta.
 
 **Nota:** Este servicio permite actualizar de forma parcial cada uno de los atributos del request body.
