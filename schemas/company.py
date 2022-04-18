@@ -1,4 +1,5 @@
 from typing import Optional
+from datetime import datetime
 
 from pydantic import BaseModel, UUID4, Field
 
@@ -32,6 +33,8 @@ class CompanyResponse(BaseModel):
     web_color: Optional[str] = Field(title=title_color, description=desc_color, example=ex_color)
     cutoff_date: Optional[str] = Field(title=title_cutoff, description=desc_cutoff, example=ex_cutoff)
     is_active: bool = Field(title=title_active, description=desc_active)
+    created_at: Optional[datetime]
+    updated_at: Optional[datetime]
 
     class Config:
         orm_mode = True
