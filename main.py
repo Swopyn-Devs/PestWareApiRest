@@ -30,7 +30,9 @@ from models import (
     application_method,
     infestation_degree,
     cleaning,
-    plague_category
+    plague_category,
+    plague,
+    cancellation_reason
 )
 from routers import (
     auth,
@@ -50,7 +52,9 @@ from routers import (
     application_methods,
     infestation_degrees,
     cleaning as r_cleaning,
-    plague_categories
+    plague_categories,
+    plagues,
+    cancellation_reasons
 )
 from schemas.auth import Settings
 from utils.config import *
@@ -100,6 +104,8 @@ application_method.Base.metadata.create_all(bind=engine)
 infestation_degree.Base.metadata.create_all(bind=engine)
 cleaning.Base.metadata.create_all(bind=engine)
 plague_category.Base.metadata.create_all(bind=engine)
+plague.Base.metadata.create_all(bind=engine)
+cancellation_reason.Base.metadata.create_all(bind=engine)
 
 
 app.include_router(auth.router)
@@ -120,6 +126,8 @@ app.include_router(application_methods.router)
 app.include_router(infestation_degrees.router)
 app.include_router(r_cleaning.router)
 app.include_router(plague_categories.router)
+app.include_router(plagues.router)
+app.include_router(cancellation_reasons.router)
 
 add_pagination(app)
 
