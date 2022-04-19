@@ -32,7 +32,14 @@ from models import (
     cleaning,
     plague_category,
     plague,
-    cancellation_reason
+    cancellation_reason,
+    origin_source,
+    service_type,
+    discount,
+    extra,
+    indication,
+    custom_description,
+    rejection_reason
 )
 from routers import (
     auth,
@@ -54,7 +61,14 @@ from routers import (
     cleaning as r_cleaning,
     plague_categories,
     plagues,
-    cancellation_reasons
+    cancellation_reasons,
+    origin_sources,
+    service_types,
+    discounts,
+    extras,
+    indications,
+    custom_descriptions,
+    rejection_reasons
 )
 from schemas.auth import Settings
 from utils.config import *
@@ -106,6 +120,13 @@ cleaning.Base.metadata.create_all(bind=engine)
 plague_category.Base.metadata.create_all(bind=engine)
 plague.Base.metadata.create_all(bind=engine)
 cancellation_reason.Base.metadata.create_all(bind=engine)
+origin_source.Base.metadata.create_all(bind=engine)
+service_type.Base.metadata.create_all(bind=engine)
+discount.Base.metadata.create_all(bind=engine)
+extra.Base.metadata.create_all(bind=engine)
+indication.Base.metadata.create_all(bind=engine)
+custom_description.Base.metadata.create_all(bind=engine)
+rejection_reason.Base.metadata.create_all(bind=engine)
 
 
 app.include_router(auth.router)
@@ -128,6 +149,13 @@ app.include_router(r_cleaning.router)
 app.include_router(plague_categories.router)
 app.include_router(plagues.router)
 app.include_router(cancellation_reasons.router)
+app.include_router(origin_sources.router)
+app.include_router(service_types.router)
+app.include_router(discounts.router)
+app.include_router(extras.router)
+app.include_router(indications.router)
+app.include_router(custom_descriptions.router)
+app.include_router(rejection_reasons.router)
 
 add_pagination(app)
 
