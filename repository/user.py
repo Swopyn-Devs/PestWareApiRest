@@ -26,6 +26,7 @@ import repository.job_center as job_center_repo
 from services import mail
 from utils.hashing import Hash
 from utils.jwt import expires
+from services import aws
 
 
 def login(db: Session, request: LoginRequest, authorize: AuthJWT):
@@ -73,11 +74,31 @@ async def register(db: Session, request: RegisterRequest, background_tasks: Back
         contact_name=request.contact_name,
         contact_email=request.contact_email,
         contact_phone=request.contact_phone,
-        country_id=request.country_id
+        country_id=request.country_id,
+        color='#3C5898'
     )
     db.add(new_company)
     db.commit()
     db.refresh(new_company)
+
+    # Upload files default to AWS S3
+    key_document_logo = f'document_logos/{new_company.id}.jpeg'
+    file = 'static/companies/document_logo.jpeg'
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_COMPANIES'), key_document_logo, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f'No fue posible actualizar el logo para documentos.')
+
+    key_document_stamp = f'document_stamps/{new_company.id}.jpeg'
+    file = 'static/companies/document_stamp.jpeg'
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_COMPANIES'), key_document_stamp, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f'No fue posible actualizar el sello para documentos.')
+
+    key_web_logo = f'web_logos/{new_company.id}.jpeg'
+    file = 'static/companies/web_logo.jpeg'
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_COMPANIES'), key_web_logo, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f'No fue posible actualizar el logo para web.')
 
     # Create employee
     new_employee = Employee(
@@ -105,7 +126,8 @@ async def register(db: Session, request: RegisterRequest, background_tasks: Back
     company = db.query(Company).filter(Company.id == new_company.id)
     company_id = str(new_company.id)
     folio = company_id.split('-')
-    company.update({'folio': folio[0]})
+    company.update({'folio': folio[0], 'document_logo': key_document_logo, 'document_stamp': key_document_stamp,
+                    'web_logo': key_web_logo})
     db.commit()
 
     conf = mail.conf

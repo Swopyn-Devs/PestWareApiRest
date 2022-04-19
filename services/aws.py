@@ -15,3 +15,14 @@ def upload_image(bucket, key, file):
     except Exception as error:
         print(error)
         return False
+
+
+def upload_default_image(bucket, key, file):
+    try:
+        s3 = boto3.resource('s3', aws_access_key_id=config('AWS_KEY'), aws_secret_access_key=config('AWS_SECRET'))
+        bucket = s3.Bucket(bucket)
+        bucket.upload_file(file, key, ExtraArgs={'ACL': 'public-read'})
+        return True
+    except Exception as error:
+        print(error)
+        return False

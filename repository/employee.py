@@ -50,6 +50,17 @@ def create(db: Session, request: EmployeeRequest, background_tasks: BackgroundTa
     )
     BaseRepo.create(db, new_employee)
 
+    # Upload file to AWS S3
+    key = f'avatars/{new_employee.id}.jpeg'
+    file = 'static/employees/avatar.jpeg'
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_EMPLOYEES'), key, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f'No fue posible subir la foto de perfil.')
+
+    employee = db.query(Employee).filter(Employee.id == new_employee.id)
+    employee.update({'avatar': key})
+    db.commit()
+
     # Create an account user.
     password_temp = str(uuid.uuid1()).split('-')[0]
     new_user = User(
@@ -77,7 +88,7 @@ def create(db: Session, request: EmployeeRequest, background_tasks: BackgroundTa
     fm = FastMail(conf)
     background_tasks.add_task(fm.send_message, message, template_name='mail_welcome.html')
 
-    return new_employee
+    return map_s3_url(new_employee)
 
 
 def update(db: Session, request: EmployeeRequest, employee_id: UUID4):
