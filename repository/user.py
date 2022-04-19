@@ -111,6 +111,17 @@ async def register(db: Session, request: RegisterRequest, background_tasks: Back
     db.commit()
     db.refresh(new_employee)
 
+    # Upload file to AWS S3
+    key = f'avatars/{new_employee.id}.jpeg'
+    file = 'static/employees/avatar.jpeg'
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_EMPLOYEES'), key, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            detail=f'No fue posible subir la foto de perfil.')
+
+    employee = db.query(Employee).filter(Employee.id == new_employee.id)
+    employee.update({'avatar': key})
+    db.commit()
+
     new_user = User(
         email=request.contact_email,
         password=Hash.bcrypt(request.password),
