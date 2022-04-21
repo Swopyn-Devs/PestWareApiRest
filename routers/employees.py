@@ -54,6 +54,18 @@ async def update_signature(employee_id: UUID4, file: UploadFile, db: Session = D
     return employee.update_signature(db, file, employee_id)
 
 
+@router.delete('/{employee_id}/avatar', status_code=status.HTTP_202_ACCEPTED, response_model=EmployeeResponse)
+async def delete_avatar(employee_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return employee.delete_avatar(db, employee_id)
+
+
+@router.delete('/{employee_id}/signature', status_code=status.HTTP_202_ACCEPTED, response_model=EmployeeResponse)
+async def delete_signature(employee_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return employee.delete_signature(db, employee_id)
+
+
 @router.delete('/{employee_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def destroy(employee_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
