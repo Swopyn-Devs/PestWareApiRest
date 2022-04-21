@@ -14,6 +14,10 @@ from schemas.employee import EmployeeRequest
 from services import aws
 from utils.hashing import Hash
 from services import mail
+from utils.functions import *
+
+
+model_name = 'empleado'
 
 
 def get_all(db: Session):
@@ -141,6 +145,30 @@ def update_signature(db: Session, signature: UploadFile, employee_id: UUID4):
     db.commit()
 
     return map_s3_url(employee.first())
+
+
+def delete_avatar(db: Session, employee_id: UUID4):
+    key = f'avatars/{employee_id}.jpeg'
+    file = 'static/employees/avatar.jpeg'
+
+    response_update_employee = update_data(db, Employee, employee_id, model_name, {'avatar': key})
+
+    if not aws.upload_default_image(config('AWS_S3_BUCKET_EMPLOYEES'), key, file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f'No fue posible eliminar la foto de perfil.')
+
+    return map_s3_url(response_update_employee)
+
+
+def delete_signature(db: Session, employee_id: UUID4):
+    key = f'signatures/{employee_id}.jpeg'
+
+    response_update_employee = update_data(db, Employee, employee_id, model_name, {'signature': None})
+
+    if not aws.delete_file(config('AWS_S3_BUCKET_EMPLOYEES'), key):
+        update_data(db, Employee, employee_id, model_name, {'signature': key})
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f'No fue posible eliminar la firma.')
+
+    return map_s3_url(response_update_employee)
 
 
 def delete(db: Session, employee_id: UUID4):

@@ -26,3 +26,12 @@ def upload_default_image(bucket, key, file):
     except Exception as error:
         print(error)
         return False
+
+
+def delete_file(bucket, key):
+    try:
+        s3 = boto3.resource('s3', aws_access_key_id=config('AWS_KEY'), aws_secret_access_key=config('AWS_SECRET'))
+        s3.Object(bucket, key).delete()
+        return True
+    except Exception as error:
+        return False

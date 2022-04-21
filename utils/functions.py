@@ -21,8 +21,8 @@ def insert_data(db, request_data):
 
 
 def update_data(db, model, model_id, model_name, request_data):
+    data = get_data(db, model, model_id, model_name, True)
     try:
-        data = get_data(db, model, model_id, model_name, True)
         data.update(request_data)
         db.commit()
     except Exception:
@@ -32,8 +32,8 @@ def update_data(db, model, model_id, model_name, request_data):
 
 
 def update_delete(db, model, model_id, model_name):
+    data = get_data(db, model, model_id, model_name, True)
     try:
-        data = get_data(db, model, model_id, model_name, True)
         data.update({'is_deleted': True})
         db.commit()
     except Exception:
