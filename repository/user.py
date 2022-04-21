@@ -43,8 +43,8 @@ def login(db: Session, request: LoginRequest, authorize: AuthJWT):
     if not user.is_active:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Tu cuenta esta suspendida.')
 
-    access_token = authorize.create_access_token(subject=user.email, expires_time=expires)
-    refresh_token = authorize.create_refresh_token(subject=user.email, expires_time=expires)
+    access_token = authorize.create_access_token(subject=str(user.id), expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=str(user.id), expires_time=expires)
 
     return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
@@ -210,7 +210,7 @@ def send_code_confirmation(db: Session, request: SendCodeConfirmation, backgroun
 
 def profile(db: Session, authorize: AuthJWT):
     current_user = authorize.get_jwt_subject()
-    user = db.query(User).filter(User.email == current_user).first()
+    user = db.query(User).filter(User.id == current_user).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
@@ -242,7 +242,7 @@ def profile(db: Session, authorize: AuthJWT):
 
 def update(db: Session, request: ProfileRequest, authorize: AuthJWT):
     current_user = authorize.get_jwt_subject()
-    user = db.query(User).filter(User.email == current_user)
+    user = db.query(User).filter(User.id == current_user)
     if not user.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
