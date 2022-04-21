@@ -56,8 +56,7 @@ def get_data(db, model, model_id, model_name, to_update=False):
 
 
 def get_employee_id_by_token(db, authorize):
-    current_user = authorize.get_jwt_subject()
-    user = db.query(User).filter(User.email == current_user)
+    user = db.query(User).filter(User.id == authorize.get_jwt_subject())
     if not user.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
