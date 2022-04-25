@@ -10,8 +10,8 @@ from schemas.type import TypeRequest, TypeUpdateRequest
 model_name = 'tipo de producto'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Type, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Type, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

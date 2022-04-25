@@ -14,10 +14,10 @@ router = APIRouter(
 )
 
 
-@router.get('', status_code=status.HTTP_200_OK, response_model=Page[PaymentMethodResponse])
-async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+@router.get('/{paginate}', status_code=status.HTTP_200_OK, response_model=Page[PaymentMethodResponse])
+async def index(paginate: bool, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return payment_method.get_all(db, authorize)
+    return payment_method.get_all(db, authorize, paginate)
 
 
 @router.get('/{payment_method_id}', status_code=status.HTTP_200_OK, response_model=PaymentMethodResponse)

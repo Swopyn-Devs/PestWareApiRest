@@ -14,10 +14,10 @@ router = APIRouter(
 )
 
 
-@router.get('', status_code=status.HTTP_200_OK, response_model=Page[ExtraResponse])
-async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+@router.get('/{paginate}', status_code=status.HTTP_200_OK, response_model=Page[ExtraResponse])
+async def index(paginate: bool, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return extra.get_all(db, authorize)
+    return extra.get_all(db, authorize, paginate)
 
 
 @router.get('/{extra_id}', status_code=status.HTTP_200_OK, response_model=ExtraResponse)

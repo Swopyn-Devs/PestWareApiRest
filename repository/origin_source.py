@@ -10,8 +10,8 @@ from schemas.origin_source import OriginSourceRequest, OriginSourceUpdateRequest
 model_name = 'fuente de origen'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, OriginSource, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, OriginSource, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

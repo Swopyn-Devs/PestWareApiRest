@@ -10,8 +10,8 @@ from schemas.cancellation_reason import CancellationReasonRequest, CancellationR
 model_name = 'motivo de cancelación'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, CancellationReason, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, CancellationReason, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

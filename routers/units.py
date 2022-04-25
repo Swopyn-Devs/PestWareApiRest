@@ -3,6 +3,7 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from typing import List, Union
 
 from database import get_db
 from repository import unit
@@ -14,10 +15,10 @@ router = APIRouter(
 )
 
 
-@router.get('', status_code=status.HTTP_200_OK, response_model=Page[UnitResponse])
-async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+@router.get('/{paginate}', status_code=status.HTTP_200_OK, response_model=Page[UnitResponse])
+async def index(paginate: bool, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return unit.get_all(db, authorize)
+    return unit.get_all(db, authorize, paginate)
 
 
 @router.get('/{unit_id}', status_code=status.HTTP_200_OK, response_model=UnitResponse)

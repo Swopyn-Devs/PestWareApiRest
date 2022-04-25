@@ -10,8 +10,8 @@ from schemas.discount import DiscountRequest, DiscountUpdateRequest
 model_name = 'descuento'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Discount, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Discount, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

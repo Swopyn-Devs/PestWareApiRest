@@ -10,8 +10,8 @@ from schemas.job_title import JobTitleRequest, JobTitleUpdateRequest
 model_name = 'puesto'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, JobTitle, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, JobTitle, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

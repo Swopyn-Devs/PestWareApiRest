@@ -10,8 +10,8 @@ from schemas.custom_description import CustomDescriptionRequest, CustomDescripti
 model_name = 'descripción personalizada'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, CustomDescription, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, CustomDescription, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

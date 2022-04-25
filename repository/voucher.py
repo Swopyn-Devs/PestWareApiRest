@@ -10,8 +10,8 @@ from schemas.voucher import VoucherRequest, VoucherUpdateRequest
 model_name = 'comprobante'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Voucher, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Voucher, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):
