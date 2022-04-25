@@ -10,8 +10,8 @@ from schemas.application_method import ApplicationMethodRequest, ApplicationMeth
 model_name = 'método de aplicación'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, ApplicationMethod, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, ApplicationMethod, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

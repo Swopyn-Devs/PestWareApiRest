@@ -10,8 +10,8 @@ from schemas.indication import IndicationRequest, IndicationUpdateRequest
 model_name = 'indicación'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Indication, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Indication, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

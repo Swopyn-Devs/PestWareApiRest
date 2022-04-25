@@ -10,8 +10,8 @@ from schemas.presentation import PresentationRequest, PresentationUpdateRequest
 model_name = 'presentación del producto'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Presentation, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Presentation, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

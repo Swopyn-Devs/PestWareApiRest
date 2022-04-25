@@ -10,8 +10,8 @@ from schemas.rejection_reason import RejectionReasonRequest, RejectionReasonUpda
 model_name = 'motivo de rechazo'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, RejectionReason, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, RejectionReason, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

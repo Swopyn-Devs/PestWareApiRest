@@ -10,8 +10,8 @@ from schemas.unit import UnitRequest, UnitUpdateRequest
 model_name = 'unidad'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Unit, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Unit, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

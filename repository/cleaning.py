@@ -10,8 +10,8 @@ from schemas.cleaning import CleaningRequest, CleaningUpdateRequest
 model_name = 'orden y limpieza'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Cleaning, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Cleaning, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):

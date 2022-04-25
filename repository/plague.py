@@ -10,8 +10,8 @@ from schemas.plague import PlagueRequest, PlagueUpdateRequest
 model_name = 'plaga'
 
 
-def get_all(db: Session, authorize: AuthJWT):
-    return get_all_data(db, Plague, authorize)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    return get_all_data(db, Plague, authorize, paginate_param, True)
 
 
 def retrieve(db: Session, model_id: UUID4):
