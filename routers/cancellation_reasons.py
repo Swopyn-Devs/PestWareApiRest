@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Query
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from database import get_db
 from repository import cancellation_reason
@@ -14,8 +15,8 @@ router = APIRouter(
 )
 
 
-@router.get('/{paginate}', status_code=status.HTTP_200_OK, response_model=Page[CancellationReasonResponse])
-async def index(paginate: bool, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+@router.get('', status_code=status.HTTP_200_OK, response_model=Page[CancellationReasonResponse])
+async def index(paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return cancellation_reason.get_all(db, authorize, paginate)
 
