@@ -17,6 +17,7 @@ from models import (
     company,
     job_center,
     employee,
+    customer,
     catalog,
     job_title,
     tax,
@@ -46,6 +47,7 @@ from routers import (
     companies,
     job_centers,
     employees,
+    customers,
     catalogs,
     job_titles,
     taxes,
@@ -103,6 +105,7 @@ app.add_middleware(
 user.Base.metadata.create_all(bind=engine)
 company.Base.metadata.create_all(bind=engine)
 employee.Base.metadata.create_all(bind=engine)
+customer.Base.metadata.create_all(bind=engine)
 catalog.Base.metadata.create_all(bind=engine)
 job_title.Base.metadata.create_all(bind=engine)
 tax.Base.metadata.create_all(bind=engine)
@@ -133,6 +136,7 @@ app.include_router(auth.router)
 app.include_router(companies.router)
 app.include_router(job_centers.router)
 app.include_router(employees.router)
+app.include_router(customers.router)
 app.include_router(catalogs.router)
 app.include_router(job_titles.router)
 app.include_router(taxes.router)
