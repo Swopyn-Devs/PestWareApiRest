@@ -75,7 +75,7 @@ async def register(db: Session, request: RegisterRequest, background_tasks: Back
         contact_email=request.contact_email,
         contact_phone=request.contact_phone,
         country_id=request.country_id,
-        color='#3C5898'
+        web_color='#3C5898'
     )
     db.add(new_company)
     db.commit()
@@ -168,8 +168,9 @@ def verify_account(db: Session, request: VerifyAccountRequest, authorize: AuthJW
     user.update({'is_verified': True, 'is_active': True})
     db.commit()
 
-    access_token = authorize.create_access_token(subject=user.first().email, expires_time=expires)
-    refresh_token = authorize.create_refresh_token(subject=user.first().email, expires_time=expires)
+    user_id = str(user.first().id)
+    access_token = authorize.create_access_token(subject=user_id, expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=user_id, expires_time=expires)
 
     return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
 
