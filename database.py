@@ -1,3 +1,4 @@
+import sqlalchemy
 from decouple import config
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
@@ -13,6 +14,7 @@ engine = create_engine(
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
+metadata = sqlalchemy.MetaData()
 
 
 async def get_db():
