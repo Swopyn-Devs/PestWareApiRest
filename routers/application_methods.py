@@ -11,7 +11,7 @@ from schemas.application_method import ApplicationMethodRequest, ApplicationMeth
 
 router = APIRouter(
     prefix='/application-methods',
-    tags=['📋  Métodos de aplicación']
+    tags=['📃 Métodos de aplicación']
 )
 
 
