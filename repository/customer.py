@@ -12,7 +12,7 @@ from utils import folios, functions
 def get_all(db: Session, authorize: AuthJWT, main_customer):
     employee = functions.get_employee_id_by_token(db, authorize)
     data = []
-    customers = db.query(Customer).filter(Customer.job_center_id == employee.job_center_id)
+    customers = db.query(Customer).filter(Customer.job_center_id == employee.job_center_id).filter(Customer.is_deleted == False)
     if main_customer is not None:
         customers = customers.filter(Customer.main_customer_id == main_customer)
 
@@ -22,7 +22,7 @@ def get_all(db: Session, authorize: AuthJWT, main_customer):
 
 
 def retrieve(db: Session, customer_id: UUID4):
-    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    customer = db.query(Customer).filter(Customer.id == customer_id).filter(Customer.is_deleted == False).first()
     if not customer:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'El cliente con el id {customer_id} no esta disponible.')
@@ -56,7 +56,7 @@ def create(db: Session, request: CustomerRequest):
 
 
 def update(db: Session, request: CustomerRequestUpdated, customer_id: UUID4):
-    customer = db.query(Customer).filter(Customer.id == customer_id)
+    customer = db.query(Customer).filter(Customer.id == customer_id).filter(Customer.is_deleted == False)
     if not customer.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'El cliente con el id {customer_id} no esta disponible.')
@@ -80,7 +80,7 @@ def delete(db: Session, customer_id: UUID4):
 
 
 def get_total_branches(db: Session, customer_id: UUID4):
-    return db.query(Customer).filter(Customer.main_customer_id == customer_id).count()
+    return db.query(Customer).filter(Customer.main_customer_id == customer_id).filter(Customer.is_deleted == False).count()
 
 
 def response_customer(db, customer):
