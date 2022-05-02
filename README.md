@@ -78,6 +78,10 @@ la comunicación de tu aplicación.
    ```shell
    > pip install -r requirements.txt
    
+   > alembic revision --autogenerate -m "Initial"
+   
+   > alembic upgrade head
+   
    > uvicorn main:app --reload
    ```
 

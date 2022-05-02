@@ -10,70 +10,10 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi_pagination import add_pagination
 
-from database import engine
 from documentation.general import *
-from models import (
-    user,
-    company,
-    job_center,
-    employee,
-    customer,
-    catalog,
-    job_title,
-    tax,
-    payment_way,
-    payment_method,
-    voucher,
-    concept,
-    presentation,
-    type,
-    unit,
-    application_method,
-    infestation_degree,
-    cleaning,
-    plague_category,
-    plague,
-    cancellation_reason,
-    origin_source,
-    service_type,
-    discount,
-    extra,
-    indication,
-    custom_description,
-    rejection_reason
-)
-from routers import (
-    auth,
-    companies,
-    job_centers,
-    employees,
-    customers,
-    catalogs,
-    job_titles,
-    taxes,
-    payment_ways,
-    payment_methods,
-    vouchers,
-    concepts,
-    presentations,
-    types,
-    units,
-    application_methods,
-    infestation_degrees,
-    cleaning as r_cleaning,
-    plague_categories,
-    plagues,
-    cancellation_reasons,
-    origin_sources,
-    service_types,
-    discounts,
-    extras,
-    indications,
-    custom_descriptions,
-    rejection_reasons
-)
 from schemas.auth import Settings
 from utils.config import *
+import routers
 
 app = FastAPI()
 
@@ -102,64 +42,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-user.Base.metadata.create_all(bind=engine)
-company.Base.metadata.create_all(bind=engine)
-employee.Base.metadata.create_all(bind=engine)
-customer.Base.metadata.create_all(bind=engine)
-catalog.Base.metadata.create_all(bind=engine)
-job_title.Base.metadata.create_all(bind=engine)
-tax.Base.metadata.create_all(bind=engine)
-payment_way.Base.metadata.create_all(bind=engine)
-payment_method.Base.metadata.create_all(bind=engine)
-voucher.Base.metadata.create_all(bind=engine)
-concept.Base.metadata.create_all(bind=engine)
-presentation.Base.metadata.create_all(bind=engine)
-type.Base.metadata.create_all(bind=engine)
-unit.Base.metadata.create_all(bind=engine)
-job_center.Base.metadata.create_all(bind=engine)
-application_method.Base.metadata.create_all(bind=engine)
-infestation_degree.Base.metadata.create_all(bind=engine)
-cleaning.Base.metadata.create_all(bind=engine)
-plague_category.Base.metadata.create_all(bind=engine)
-plague.Base.metadata.create_all(bind=engine)
-cancellation_reason.Base.metadata.create_all(bind=engine)
-origin_source.Base.metadata.create_all(bind=engine)
-service_type.Base.metadata.create_all(bind=engine)
-discount.Base.metadata.create_all(bind=engine)
-extra.Base.metadata.create_all(bind=engine)
-indication.Base.metadata.create_all(bind=engine)
-custom_description.Base.metadata.create_all(bind=engine)
-rejection_reason.Base.metadata.create_all(bind=engine)
 
-
-app.include_router(auth.router)
-app.include_router(companies.router)
-app.include_router(job_centers.router)
-app.include_router(employees.router)
-app.include_router(customers.router)
-app.include_router(catalogs.router)
-app.include_router(job_titles.router)
-app.include_router(taxes.router)
-app.include_router(payment_ways.router)
-app.include_router(payment_methods.router)
-app.include_router(vouchers.router)
-app.include_router(concepts.router)
-app.include_router(presentations.router)
-app.include_router(types.router)
-app.include_router(units.router)
-app.include_router(application_methods.router)
-app.include_router(infestation_degrees.router)
-app.include_router(r_cleaning.router)
-app.include_router(plague_categories.router)
-app.include_router(plagues.router)
-app.include_router(cancellation_reasons.router)
-app.include_router(origin_sources.router)
-app.include_router(service_types.router)
-app.include_router(discounts.router)
-app.include_router(extras.router)
-app.include_router(indications.router)
-app.include_router(custom_descriptions.router)
-app.include_router(rejection_reasons.router)
+app.include_router(routers.router)
 
 add_pagination(app)
 

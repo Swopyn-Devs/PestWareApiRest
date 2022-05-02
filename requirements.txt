@@ -16,3 +16,6 @@ python-slugify
 boto3
 awscli
 Jinja2
+pytest
+requests
+alembic
