@@ -4,10 +4,10 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 
-from models.price_list_prices import PriceListPrice
+from models.price_list_price import PriceListPrice
 from schemas.price_list_price import PriceListPriceRequest, PriceListPriceUpdateRequest
 
-model_name = 'precio(s) de lista de precio'
+model_name = 'precio de lista de precio'
 
 
 def get_all(db: Session, authorize: AuthJWT, paginate_param: bool, price_list_id: UUID4):

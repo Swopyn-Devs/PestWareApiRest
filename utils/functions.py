@@ -12,7 +12,7 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
         data = db.query(model).filter(model.job_center_id == employee.job_center_id).filter(model.is_deleted == False).all()
     else:
         query = db.query(model).filter(model.is_deleted == False)
-        query = add_filters(query, filters)
+        query = add_filters(model, query, filters)
         data = query.all()
 
     if paginate_param:
@@ -61,7 +61,7 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
     else:
         query = db.query(model).filter(model.is_deleted == False)
 
-    query = add_filters(query, filters)
+    query = add_filters(model, query, filters)
 
     if to_update:
         data = query
@@ -87,9 +87,10 @@ def get_employee_id_by_token(db, authorize):
     return employee
 
 
-def add_filters(query, filters):
+def add_filters(model, query, filters):
     if filters:
-        query.filter_by(**filters)
+        for attr, value in filters.items():
+            query = query.filter(getattr(model, attr) == value)
     return query
 
 
