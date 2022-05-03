@@ -5,7 +5,8 @@ from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 
 from models.price_list_price import PriceListPrice
-from schemas.price_list_price import PriceListPriceRequest, PriceListPriceUpdateRequest
+from schemas.price_list_price import PriceListPriceRequest
+from models.price_list import PriceList
 
 model_name = 'precio de lista de precio'
 
@@ -19,6 +20,7 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def create(db: Session, request: PriceListPriceRequest, model_id: UUID4):
+    get_data(db, PriceList, model_id, 'lista de precio')
     request_data = PriceListPrice(
         price_list_id=model_id,
         scale=request.scale,
@@ -29,7 +31,7 @@ def create(db: Session, request: PriceListPriceRequest, model_id: UUID4):
     return request_data
 
 
-def update(db: Session, request: PriceListPriceUpdateRequest, model_id: UUID4):
+def update(db: Session, request: PriceListPriceRequest, model_id: UUID4):
     return update_data(db, PriceListPrice, model_id, model_name, request.dict())
 
 

@@ -10,7 +10,7 @@ from repository import price_list
 from repository import price_list_price
 from repository import price_list_plague
 from schemas.price_list import PriceListRequest, PriceListResponse
-from schemas.price_list_price import PriceListPriceRequest, PriceListPriceUpdateRequest, PriceListPriceResponse
+from schemas.price_list_price import PriceListPriceRequest, PriceListPriceResponse
 from schemas.price_list_plague import PriceListPlagueRequest, PriceListPlagueResponse
 
 router = APIRouter(
@@ -80,7 +80,7 @@ async def update(price_list_id: UUID4, request: PriceListRequest, db: Session = 
 
 
 @router.put('/prices/{price_list_price_id}', status_code=status.HTTP_202_ACCEPTED, response_model=PriceListPriceResponse)
-async def update_price(price_list_price_id: UUID4, request: PriceListPriceUpdateRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def update_price(price_list_price_id: UUID4, request: PriceListPriceRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return price_list_price.update(db, request, price_list_price_id)
 
