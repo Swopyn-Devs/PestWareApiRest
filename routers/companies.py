@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import company
-from schemas.company import CompanyRequest, CompanyResponse
+from schemas.company import CompanyRequest, CompanyResponse, CompanyColorRequest
 
 router = APIRouter(
     prefix='/companies',
@@ -52,6 +52,13 @@ async def update_web_logo(company_id: UUID4, file: UploadFile, db: Session = Dep
                           authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return company.update_web_logo(db, file, company_id)
+
+
+@router.patch('/{company_id}/web_color', status_code=status.HTTP_202_ACCEPTED, response_model=CompanyResponse)
+async def update_web_color(company_id: UUID4, request: CompanyColorRequest, db: Session = Depends(get_db),
+                           authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return company.update_web_color(db, request, company_id)
 
 
 @router.delete('/{company_id}', status_code=status.HTTP_204_NO_CONTENT)

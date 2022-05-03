@@ -38,3 +38,7 @@ class CompanyResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CompanyColorRequest(BaseModel):
+    web_color: Optional[str] = Field(title=title_color, description=desc_color, example=ex_color)

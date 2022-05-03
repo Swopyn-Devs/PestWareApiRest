@@ -5,7 +5,7 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from models.company import Company
-from schemas.company import CompanyRequest
+from schemas.company import CompanyRequest, CompanyColorRequest
 from services import aws
 
 
@@ -94,6 +94,18 @@ def update_web_logo(db: Session, logo: UploadFile, company_id: UUID4):
                             detail=f'No fue posible actualizar el logo para web.')
 
     company.update({'web_logo': key})
+    db.commit()
+
+    return map_s3_url(company.first())
+
+
+def update_web_color(db: Session, request: CompanyColorRequest, company_id: UUID4):
+    company = db.query(Company).filter(Company.id == company_id)
+    if not company.first():
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'La empresa con el id {company_id} no está disponible.')
+
+    company.update({'web_color': request.web_color})
     db.commit()
 
     return map_s3_url(company.first())
