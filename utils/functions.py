@@ -6,12 +6,14 @@ from models.employee import Employee
 from models.user import User
 
 
-def get_all_data(db, model, authorize, paginate_param, filter_job_center=False):
+def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, filters=False):
     if filter_job_center:
         employee = get_employee_id_by_token(db, authorize)
         data = db.query(model).filter(model.job_center_id == employee.job_center_id).filter(model.is_deleted == False).all()
     else:
-        data = db.query(model).filter(model.is_deleted == False).all()
+        query = db.query(model).filter(model.is_deleted == False)
+        query = add_filters(model, query, filters)
+        data = query.all()
 
     if paginate_param:
         return paginate(data)
@@ -31,8 +33,8 @@ def insert_data(db, request_data):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
 
 
-def update_data(db, model, model_id, model_name, request_data):
-    data = get_data(db, model, model_id, model_name, True)
+def update_data(db, model, model_id, model_name, request_data, filters=False):
+    data = get_data(db, model, model_id, model_name, True, filters)
     try:
         data.update(request_data)
         db.commit()
@@ -42,8 +44,8 @@ def update_data(db, model, model_id, model_name, request_data):
     return data.first()
 
 
-def update_delete(db, model, model_id, model_name):
-    data = get_data(db, model, model_id, model_name, True)
+def update_delete(db, model, model_id, model_name, filters=False):
+    data = get_data(db, model, model_id, model_name, True, filters)
     try:
         data.update({'is_deleted': True})
         db.commit()
@@ -53,13 +55,20 @@ def update_delete(db, model, model_id, model_name):
     return {'detail': delete_message(model_name)}
 
 
-def get_data(db, model, model_id, model_name, to_update=False):
+def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False):
+    if model_id:
+        query = db.query(model).filter(model.id == model_id).filter(model.is_deleted == False)
+    else:
+        query = db.query(model).filter(model.is_deleted == False)
+
+    query = add_filters(model, query, filters)
+
     if to_update:
-        data = db.query(model).filter(model.id == model_id).filter(model.is_deleted == False)
+        data = query
         if not data.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail_message(model_name, model_id))
     else:
-        data = db.query(model).filter(model.id == model_id).filter(model.is_deleted == False).first()
+        data = query.first()
         if not data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=detail_message(model_name, model_id))
 
@@ -76,3 +85,20 @@ def get_employee_id_by_token(db, authorize):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='No se encontró el perfil.')
 
     return employee
+
+
+def add_filters(model, query, filters):
+    if filters:
+        for attr, value in filters.items():
+            query = query.filter(getattr(model, attr) == value)
+    return query
+
+
+def map_s3_url(url, field_name):
+    return f"{url}/{field_name}"
+
+
+def validate_pdf(file):
+    allowed_types = ['application/pdf']
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='El archivo debe ser de tipo PDF: (.pdf).')
