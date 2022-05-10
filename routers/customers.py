@@ -16,9 +16,16 @@ router = APIRouter(
 
 
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[CustomerResponse])
-async def index(main_customer: Optional[UUID4] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def index(
+        is_main: Optional[bool] = Query(None),
+        main_customer: Optional[UUID4] = Query(None),
+        folio: Optional[str] = Query(None),
+        name: Optional[str] = Query(None),
+        is_active: Optional[bool] = Query(None),
+        contact: Optional[str] = Query(None),
+        db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return customer.get_all(db, authorize, main_customer)
+    return customer.get_all(db, authorize, is_main, main_customer, folio, name, is_active, contact)
 
 
 @router.get('/{customer_id}', status_code=status.HTTP_200_OK, response_model=CustomerResponse)

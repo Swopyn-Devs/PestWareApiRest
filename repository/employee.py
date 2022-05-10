@@ -193,7 +193,7 @@ def map_s3_url(employee: Employee):
 
 
 def validate_image(image):
-    allowed_types = ['image/jpeg', 'image/jpg']
+    allowed_types = ['image/jpeg', 'image/jpg', 'image/png']
     if image.content_type not in allowed_types:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='El avatar debe ser de tipo imagen: (.jpg o .jpeg).')

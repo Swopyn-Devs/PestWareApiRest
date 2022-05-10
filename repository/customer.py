@@ -9,12 +9,24 @@ from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerRe
 from utils import folios, functions
 
 
-def get_all(db: Session, authorize: AuthJWT, main_customer):
+def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name, is_active, contact):
     employee = functions.get_employee_id_by_token(db, authorize)
     data = []
     customers = db.query(Customer).filter(Customer.job_center_id == employee.job_center_id).filter(Customer.is_deleted == False)
+    if is_main is not None:
+        customers = customers.filter(Customer.is_main == is_main)
     if main_customer is not None:
         customers = customers.filter(Customer.main_customer_id == main_customer)
+    if folio is not None:
+        customers = customers.filter(Customer.folio == folio)
+    if name is not None:
+        search = "%{}%".format(name)
+        customers = customers.filter(Customer.name.like(search))
+    if is_active is not None:
+        customers = customers.filter(Customer.is_active == is_active)
+    if contact is not None:
+        search = "%{}%".format(contact)
+        customers = customers.filter(Customer.contact_name.like(search))
 
     for customer in customers.all():
         data.append(response_customer(db, customer))
