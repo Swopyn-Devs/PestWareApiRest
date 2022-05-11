@@ -32,6 +32,7 @@ class JobCenterRequest(BaseModel):
 class JobCenterResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    slug: str = Field(title=title_slug, description=desc_slug, example=ex_slug)
     business_name: str = Field(title=title_business_name, description=desc_business_name, max_length=255, min_length=3,
                                example=ex_business_name)
     health_manager: Optional[str] = Field(title=title_health_manager, description=desc_health_manager, max_length=255,

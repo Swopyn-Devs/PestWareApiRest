@@ -9,6 +9,7 @@ class JobCenter(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=DefaultClause(text('gen_random_uuid()')))
     name = Column(String, nullable=False)
+    slug = Column(String, unique=True, nullable=False)
     business_name = Column(String, nullable=True)
     health_manager = Column(String, nullable=True)
     company_id = Column(UUID(as_uuid=True), nullable=False)

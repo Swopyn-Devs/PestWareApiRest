@@ -2,6 +2,7 @@ from decouple import config
 from fastapi import HTTPException, status, UploadFile
 from fastapi_pagination import paginate
 from pydantic import UUID4
+from slugify import slugify
 from sqlalchemy.orm import Session
 
 from models.job_center import JobCenter
@@ -28,8 +29,10 @@ def retrieve(db: Session, job_center_id: UUID4):
 
 
 def create(db: Session, request: JobCenterRequest):
+    slug = slugify(request.name)
     new_job_center = JobCenter(
         name=request.name,
+        slug=slug,
         business_name=request.business_name,
         health_manager=request.health_manager,
         company_id=request.company_id,
