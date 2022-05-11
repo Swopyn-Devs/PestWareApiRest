@@ -10,6 +10,7 @@ class PriceListRequest(BaseModel):
     cost: float = Field(title=title_cost, description=desc_cost, example=ex_cost, ge=1)
     frequency_days: int = Field(title=title_frequency_days, description=desc_frequency_days, example=ex_frequency_days, ge=0)
     certificate_expiration_days: int = Field(title=title_certificate_expiration_days, description=desc_certificate_expiration_days, example=ex_certificate_expiration_days, ge=0)
+    follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     show_price: Optional[bool] = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
     disinfection: Optional[bool] = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
     service_type_id: UUID4 = Field(title=title_service_type_id, description=desc_service_type_id, example=ex_service_type_id)
@@ -27,6 +28,7 @@ class PriceListResponse(BaseModel):
     cost: float = Field(title=title_cost, description=desc_cost, example=ex_cost, ge=1)
     frequency_days: int = Field(title=title_frequency_days, description=desc_frequency_days, example=ex_frequency_days, ge=0)
     certificate_expiration_days: int = Field(title=title_certificate_expiration_days, description=desc_certificate_expiration_days, example=ex_certificate_expiration_days, ge=0)
+    follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     show_price: bool = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
     disinfection: bool = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
     cover: Optional[str] = None

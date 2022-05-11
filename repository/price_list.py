@@ -32,6 +32,7 @@ def create(db: Session, request: PriceListRequest, authorize: AuthJWT):
         cost=request.cost,
         frequency_days=request.frequency_days,
         certificate_expiration_days=request.certificate_expiration_days,
+        follow_up_days=request.follow_up_days,
         show_price=request.show_price,
         disinfection=request.disinfection,
         service_type_id=request.service_type_id,
