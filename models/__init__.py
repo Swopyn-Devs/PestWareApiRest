@@ -27,3 +27,4 @@ from models.indication import *
 from models.custom_description import *
 from models.rejection_reason import *
 from models.price_list import *
+from models.supplier import *

@@ -29,6 +29,7 @@ from routers import types
 from routers import units
 from routers import vouchers
 from routers import price_lists
+from routers import suppliers
 
 router = APIRouter()
 
@@ -61,3 +62,4 @@ router.include_router(indications.router)
 router.include_router(custom_descriptions.router)
 router.include_router(rejection_reasons.router)
 router.include_router(price_lists.router)
+router.include_router(suppliers.router)
