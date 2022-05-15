@@ -14,6 +14,7 @@ class PriceList(Base):
     cost = Column(Numeric, nullable=False)
     frequency_days = Column(SmallInteger, nullable=False)
     certificate_expiration_days = Column(SmallInteger, nullable=False)
+    follow_up_days = Column(SmallInteger, nullable=False)
     show_price = Column(Boolean, nullable=False, default=True)
     disinfection = Column(Boolean, nullable=False, default=False)
     cover = Column(String, nullable=True)
