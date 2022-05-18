@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import customer
-from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse
+from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
 
 router = APIRouter(
     prefix='/customers',
@@ -51,3 +51,9 @@ async def update(customer_id: UUID4, request: CustomerRequestUpdated, db: Sessio
 async def destroy(customer_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return customer.delete(db, customer_id)
+
+
+@router.get('/xlsx/{customer_id}', status_code=status.HTTP_200_OK, response_model=CustomerXlsxResponse)
+async def xlsx(customer_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return customer.xlsx(db, customer_id)

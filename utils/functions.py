@@ -5,6 +5,9 @@ from utils.messages import *
 from models.employee import Employee
 from models.user import User
 
+import pandas as pd
+import base64
+
 
 def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, filters=False):
     if filter_job_center:
@@ -15,8 +18,10 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
         query = add_filters(model, query, filters)
         data = query.all()
 
-    if paginate_param:
+    if paginate_param == True:
         return paginate(data)
+    elif paginate_param == 'all':
+        return data
 
     data_size = len(data)
     if data_size <= 0:
@@ -102,3 +107,32 @@ def validate_pdf(file):
     allowed_types = ['application/pdf']
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail='El archivo debe ser de tipo PDF: (.pdf).')
+
+
+def encode_base64(data):
+    return base64.b64encode(bytes(data, 'utf-8'))
+
+
+def create_xlsx(data):
+    dict_data = object_as_dict(data)
+    if type(data) is list:
+        df = pd.DataFrame(data=dict_data)
+    else:
+        df = pd.DataFrame(data=dict_data, index=[1])
+    return encode_base64(df.to_string())
+
+
+def object_as_dict(obj):
+    d = {}
+    if type(obj) is list:
+        for obj2 in obj:
+            for column in obj2.__table__.columns:
+                if column.name in d:
+                    d[column.name].append(str(getattr(obj2, column.name)))
+                else:
+                    d[column.name] = [str(getattr(obj2, column.name))]
+    else:
+        for column in obj.__table__.columns:
+            d[column.name] = str(getattr(obj, column.name))
+
+    return d

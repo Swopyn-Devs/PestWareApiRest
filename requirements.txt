@@ -19,3 +19,5 @@ Jinja2
 pytest
 requests
 alembic
+pandas
+base64

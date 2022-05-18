@@ -61,3 +61,10 @@ class CustomerResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CustomerXlsxResponse(BaseModel):
+    xlsx_base64: str
+
+    class Config:
+        orm_mode = True
