@@ -5,8 +5,11 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from models.customer import Customer
-from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse
+from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
 from utils import folios, functions
+
+
+model_name = 'cliente'
 
 
 def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name, is_active, contact):
@@ -89,6 +92,14 @@ def delete(db: Session, customer_id: UUID4):
     db.commit()
 
     return {'detail': 'El cliente se elimino correctamente.'}
+
+
+def xlsx(db: Session, model_id: UUID4):
+    customer_data = functions.get_data(db, Customer, model_id, model_name)
+    xlsx_data = functions.create_xlsx(customer_data)
+    return CustomerXlsxResponse(
+        xlsx_base64=xlsx_data
+    )
 
 
 def get_total_branches(db: Session, customer_id: UUID4):
