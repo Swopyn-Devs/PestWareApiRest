@@ -94,12 +94,12 @@ def delete(db: Session, customer_id: UUID4):
     return {'detail': 'El cliente se elimino correctamente.'}
 
 
-def xlsx(db: Session, model_id: UUID4):
+def csv(db: Session, model_id: UUID4):
     customer_data = functions.get_data(db, Customer, model_id, model_name)
-    xlsx_data = functions.create_xlsx(customer_data)
-    return CustomerXlsxResponse(
-        xlsx_base64=xlsx_data
-    )
+    test_data = db.query(Customer).all()
+    print(test_data)
+    csv_data = functions.create_csv(test_data)
+    return csv_data
 
 
 def get_total_branches(db: Session, customer_id: UUID4):

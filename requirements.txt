@@ -20,4 +20,3 @@ pytest
 requests
 alembic
 pandas
-base64
