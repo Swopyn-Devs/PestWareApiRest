@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Query, UploadFile
+from fastapi import APIRouter, Depends, status, Query
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
@@ -83,18 +83,6 @@ async def update(price_list_id: UUID4, request: PriceListRequest, db: Session = 
 async def update_price(price_list_price_id: UUID4, request: PriceListPriceRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return price_list_price.update(db, request, price_list_price_id)
-
-
-@router.patch('/{price_list_id}/cover', status_code=status.HTTP_202_ACCEPTED, response_model=PriceListResponse)
-async def update_cover(price_list_id: UUID4, file: UploadFile, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list.update_cover(db, file, price_list_id, authorize)
-
-
-@router.delete('/{price_list_id}/cover', status_code=status.HTTP_202_ACCEPTED, response_model=PriceListResponse)
-async def delete_cover(price_list_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list.delete_cover(db, price_list_id)
 
 
 @router.delete('/{price_list_id}', status_code=status.HTTP_204_NO_CONTENT)
