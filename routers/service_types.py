@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status, Query
+from fastapi import APIRouter, Depends, status, Query, UploadFile
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
@@ -43,3 +43,15 @@ async def update(service_type_id: UUID4, request: ServiceTypeUpdateRequest, db: 
 async def destroy(service_type_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return service_type.delete(db, service_type_id)
+
+
+@router.patch('/{service_type_id}/cover', status_code=status.HTTP_202_ACCEPTED, response_model=ServiceTypeResponse)
+async def update_cover(service_type_id: UUID4, file: UploadFile, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return service_type.update_cover(db, file, service_type_id)
+
+
+@router.delete('/{service_type_id}/cover', status_code=status.HTTP_202_ACCEPTED, response_model=ServiceTypeResponse)
+async def delete_cover(service_type_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return service_type.delete_cover(db, service_type_id)
