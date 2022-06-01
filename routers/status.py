@@ -11,7 +11,7 @@ from schemas.status import StatusRequest, StatusResponse
 
 router = APIRouter(
     prefix='/status',
-    tags=['💰 Estatus']
+    tags=['🏷 Estatus']
 )
 
 
