@@ -29,3 +29,4 @@ from models.rejection_reason import *
 from models.price_list import *
 from models.supplier import *
 from models.status import *
+from models.quote import *

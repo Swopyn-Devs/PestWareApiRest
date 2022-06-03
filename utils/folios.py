@@ -1,5 +1,6 @@
 from fastapi import HTTPException, status
 from models.customer import Customer
+from models.quote import Quote
 from pydantic import UUID4
 
 
@@ -28,3 +29,14 @@ def customer(db, job_center_id: UUID4, main_customer_id, main_customer=True) -> 
         last_folio_branch += 1
         folio = f'CL-{customer_folio}-{last_folio_branch}'
         return folio
+
+
+def quote(db, job_center_id: UUID4) -> str:
+    last = db.query(Quote).filter(Quote.job_center_id == job_center_id) \
+        .order_by(Quote.created_at.desc()).first()
+    folio = f'C-1000'
+    if last is not None:
+        last_folio = int(last.folio.split('-')[1])
+        last_folio += 1
+        folio = f'C-{last_folio}'
+    return folio
