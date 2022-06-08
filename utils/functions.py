@@ -9,6 +9,7 @@ from models.user import User
 
 import pandas as pd
 import base64
+import uuid
 import io
 
 
@@ -157,3 +158,7 @@ def object_as_dict(obj):
             d[column.name] = str(getattr(obj, column.name))
 
     return d
+
+
+def get_status_id():
+    return uuid.UUID('8ba451f8-b352-4ff6-b573-532b36c7172b')
