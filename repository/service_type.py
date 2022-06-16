@@ -13,11 +13,28 @@ model_name = 'tipo de servicio'
 
 
 def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
-    return get_all_data(db, ServiceType, authorize, paginate_param, True)
+    data = db.query(ServiceType).filter(ServiceType.is_deleted == False).all()
+
+    for item in data:
+        if item.cover is not None:
+            item.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), item.cover)
+
+    if paginate_param == True:
+        return paginate(data)
+    elif paginate_param == 'all':
+        return data
+
+    data_size = len(data)
+    if data_size <= 0:
+        data_size = 1
+    return paginate(data, Params(size=data_size))
 
 
 def retrieve(db: Session, model_id: UUID4):
-    return get_data(db, ServiceType, model_id, model_name)
+    data = get_data(db, ServiceType, model_id, model_name)
+    if data.cover is not None:
+        data.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), data.cover)
+    return data
 
 
 def create(db: Session, request: ServiceTypeRequest, authorize: AuthJWT):
