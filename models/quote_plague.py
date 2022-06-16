@@ -4,11 +4,11 @@ from sqlalchemy.dialects.postgresql import UUID
 from database import Base
 
 
-class PriceListPlague(Base):
-    __tablename__ = 'price_list_plagues'
+class QuotePlague(Base):
+    __tablename__ = 'quote_plagues'
 
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=DefaultClause(text('gen_random_uuid()')))
-    price_list_id = Column(UUID(as_uuid=True), nullable=False)
+    quote_id = Column(UUID(as_uuid=True), nullable=False)
     plague_id = Column(UUID(as_uuid=True), nullable=False)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())

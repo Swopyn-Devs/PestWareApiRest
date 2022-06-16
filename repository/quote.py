@@ -31,7 +31,6 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
     get_data(db, Customer, request.customer_id, 'cliente')
     get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
     get_data(db, Employee, request.employee_id, 'empleado')
-    get_data(db, Status, request.status_id, 'estatus')
     folio = folios.quote(db, employee.job_center_id)
     request_data = Quote(
         folio=folio,
@@ -41,7 +40,7 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
         customer_id=request.customer_id,
         origin_source_id=request.origin_source_id,
         employee_id=request.employee_id,
-        status_id=request.status_id,
+        status_id=get_status_id(),
         job_center_id=employee.job_center_id
     )
     insert_data(db, request_data)
@@ -53,7 +52,6 @@ def update(db: Session, request: QuoteUpdateRequest, model_id: UUID4):
     get_data(db, Customer, request.customer_id, 'cliente')
     get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
     get_data(db, Employee, request.employee_id, 'empleado')
-    get_data(db, Status, request.status_id, 'estatus')
     get_data(db, JobCenter, request.job_center_id, 'centro de trabajo')
     return update_data(db, Quote, model_id, model_name, request.dict())
 

@@ -1,5 +1,6 @@
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 from database import Base
 
@@ -15,7 +16,7 @@ class Quote(Base):
     customer_id = Column(UUID(as_uuid=True), nullable=False)
     origin_source_id = Column(UUID(as_uuid=True), nullable=False)
     employee_id = Column(UUID(as_uuid=True), nullable=False)
-    status_id = Column(UUID(as_uuid=True), nullable=False)
+    status_id = Column(UUID(as_uuid=True), nullable=False, default=uuid.UUID('8ba451f8-b352-4ff6-b573-532b36c7172b'))
     job_center_id = Column(UUID(as_uuid=True), nullable=False)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())

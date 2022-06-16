@@ -10,7 +10,6 @@ class QuoteRequest(BaseModel):
     customer_id: UUID4 = Field(title=title_customer_id, description=desc_customer_id, example=ex_customer_id)
     origin_source_id: UUID4 = Field(title=title_origin_source_id, description=desc_origin_source_id, example=ex_origin_source_id)
     employee_id: UUID4 = Field(title=title_employee_id, description=desc_employee_id, example=ex_employee_id)
-    status_id: UUID4 = Field(title=title_status_id, description=desc_status_id, example=ex_status_id)
 
     class Config:
         orm_mode = True
@@ -23,7 +22,6 @@ class QuoteUpdateRequest(BaseModel):
     customer_id: UUID4 = Field(title=title_customer_id, description=desc_customer_id, example=ex_customer_id)
     origin_source_id: UUID4 = Field(title=title_origin_source_id, description=desc_origin_source_id, example=ex_origin_source_id)
     employee_id: UUID4 = Field(title=title_employee_id, description=desc_employee_id, example=ex_employee_id)
-    status_id: UUID4 = Field(title=title_status_id, description=desc_status_id, example=ex_status_id)
     job_center_id: UUID4 = Field(title=title_job_center_id, description=desc_job_center_id, example=ex_job_center_id)
 
     class Config:
