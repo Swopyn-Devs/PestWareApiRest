@@ -1,6 +1,6 @@
 from typing import Optional
-
 from pydantic import BaseModel, UUID4
+from schemas.job_center import JobCenterResponse
 
 
 class JobTitleRequest(BaseModel):
@@ -21,7 +21,7 @@ class JobTitleUpdateRequest(BaseModel):
 class JobTitleResponse(BaseModel):
     id: UUID4
     name: str
-    job_center_id: UUID4
+    job_center_id: JobCenterResponse
 
     class Config:
         orm_mode = True

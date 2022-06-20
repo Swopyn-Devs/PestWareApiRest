@@ -1,21 +1,31 @@
+from utils.functions import *
+
 from decouple import config
 from fastapi import HTTPException, status, UploadFile
 from fastapi_pagination import paginate
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from fastapi_jwt_auth import AuthJWT
 
 from models.company import Company
 from schemas.company import CompanyRequest, CompanyColorRequest
 from services import aws
 
+model_name = 'empresa'
 
-def get_all(db: Session):
-    companies = db.query(Company).all()
-    data = []
-    for company in companies:
+
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    data = get_all_data(db, Company, authorize, 'all', False)
+    for company in data:
         data.append(map_s3_url(company))
 
-    return paginate(data)
+    if paginate_param:
+        return paginate(data)
+
+    data_size = len(data)
+    if data_size <= 0:
+        data_size = 1
+    return paginate(data, Params(size=data_size))
 
 
 def retrieve(db: Session, company_id: UUID4):

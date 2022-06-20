@@ -1,9 +1,8 @@
 from typing import Optional
 from datetime import datetime
-
 from pydantic import BaseModel, UUID4, Field
-
 from documentation.company import *
+from schemas.catalog import CountryResponse
 
 
 class CompanyRequest(BaseModel):
@@ -26,7 +25,7 @@ class CompanyResponse(BaseModel):
     contact_name: str = Field(title=title_c_name, description=desc_c_name, max_length=255, example=ex_c_name)
     contact_email: str = Field(title=title_c_email, description=desc_c_email, max_length=255, example=ex_c_email)
     contact_phone: str = Field(title=title_c_phone, description=desc_c_phone, example=ex_c_phone)
-    country_id: UUID4 = Field(title=title_country, description=desc_country, example=ex_country)
+    country_id: CountryResponse
     document_logo: Optional[str] = Field(title=title_logo_d, description=desc_logo_d, example=ex_logo_d)
     document_stamp: Optional[str] = Field(title=title_stamp_d, description=desc_stamp_d, example=ex_stamp_d)
     web_logo: Optional[str] = Field(title=title_logo_w, description=desc_logo_w, example=ex_logo_w)

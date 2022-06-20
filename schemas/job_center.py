@@ -1,6 +1,7 @@
 from typing import Optional
 from pydantic import Field
 from documentation.job_centers import *
+from schemas.company import CompanyResponse
 
 from pydantic import BaseModel, UUID4, EmailStr
 

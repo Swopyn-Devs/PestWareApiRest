@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, status, UploadFile
+from fastapi import APIRouter, Depends, status, UploadFile, Query
 from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from typing import Optional
 
 from database import get_db
 from repository import company
@@ -15,9 +16,9 @@ router = APIRouter(
 
 
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[CompanyResponse])
-async def index(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def index(paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return company.get_all(db)
+    return company.get_all(db, authorize, paginate)
 
 
 @router.get('/{company_id}', status_code=status.HTTP_200_OK, response_model=CompanyResponse)
