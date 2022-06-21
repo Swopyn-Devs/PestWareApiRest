@@ -30,3 +30,4 @@ from models.price_list import *
 from models.supplier import *
 from models.status import *
 from models.quote import *
+from models.customer_portal_account import *
