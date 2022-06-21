@@ -6,8 +6,9 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_mail import FastMail, MessageSchema
 from sqlalchemy.orm import Session
 
+from models.customer import Customer
 from models.customer_portal_account import CustomerPortalAccount
-from schemas.customer_portal_account import CustomerPortalAccountRequest
+from schemas.customer_portal_account import CustomerPortalAccountRequest, CustomerPortalAccountRequestUpdated, SendCredentialsRequest, SendCredentialsResponse
 from services import mail
 from utils.hashing import Hash
 
@@ -27,12 +28,13 @@ model_name = 'cuenta de portal'
 
 def get_all(db: Session, authorize: AuthJWT, customer_id):
     employee = functions.get_employee_id_by_token(db, authorize)
-    data = []
-    portal_accounts = db.query(CustomerPortalAccount).filter(CustomerPortalAccount.job_center_id == employee.job_center_id).filter(CustomerPortalAccount.is_deleted == False)
+    portal_accounts = db.query(CustomerPortalAccount).\
+        join(Customer, CustomerPortalAccount.customer_id == Customer.id).\
+        filter(Customer.job_center_id == employee.job_center_id).filter(CustomerPortalAccount.is_deleted == False)
     if customer_id is not None:
         portal_accounts = portal_accounts.filter(CustomerPortalAccount.customer_id == customer_id)
 
-    return paginate(data)
+    return paginate(portal_accounts.all())
 
 
 def retrieve(db: Session, portal_account_id: UUID4):
@@ -46,7 +48,10 @@ def retrieve(db: Session, portal_account_id: UUID4):
 
 def create(db: Session, authorize: AuthJWT, request: CustomerPortalAccountRequest):
     employee = functions.get_employee_id_by_token(db, authorize)
-    account = db.query(CustomerPortalAccount).filter(CustomerPortalAccount.job_center_id == employee.job_center_id).filter(CustomerPortalAccount.is_deleted == False).filter(CustomerPortalAccount.username == request.username).first()
+    account = db.query(CustomerPortalAccount).\
+        join(Customer, CustomerPortalAccount.customer_id == Customer.id).\
+        filter(Customer.job_center_id == employee.job_center_id).filter(CustomerPortalAccount.is_deleted == False).\
+        filter(CustomerPortalAccount.username == request.username).first()
 
     if account:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -67,14 +72,39 @@ def create(db: Session, authorize: AuthJWT, request: CustomerPortalAccountReques
     return new_account
 
 
-def update(db: Session, request: CustomerPortalAccountRequest, portal_account_id: UUID4):
+def update(db: Session, authorize: AuthJWT, request: CustomerPortalAccountRequestUpdated, portal_account_id: UUID4):
+    employee = functions.get_employee_id_by_token(db, authorize)
     account = db.query(CustomerPortalAccount).filter(CustomerPortalAccount.id == portal_account_id).filter(CustomerPortalAccount.is_deleted == False)
     if not account.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f'La cuenta de portal con el id {portal_account_id} no esta disponible.')
 
-    account.update(request.dict())
-    db.commit()
+    if request.username is not None:
+        account_portal = db.query(CustomerPortalAccount).\
+            join(Customer, CustomerPortalAccount.customer_id == Customer.id).\
+            filter(Customer.job_center_id == employee.job_center_id).filter(CustomerPortalAccount.is_deleted == False).\
+            filter(CustomerPortalAccount.id != portal_account_id).\
+            filter(CustomerPortalAccount.username == request.username).first()
+
+        if account_portal:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail='Ya existe una cuenta con este usuario.')
+
+        account.update({'username': request.username})
+        db.commit()
+
+
+    if request.name is not None:
+        account.update({'name': request.name})
+        db.commit()
+
+    if request.is_active is not None:
+        account.update({'is_active': request.is_active})
+        db.commit()
+
+    if request.customer_id is not None:
+        account.update({'customer_id': request.customer_id})
+        db.commit()
 
     if request.password is not None:
         account.update({'password': Hash.bcrypt(request.password)})
@@ -93,3 +123,26 @@ def delete(db: Session, portal_account_id: UUID4):
     db.commit()
 
     return {'detail': 'La cuenta de portal se elimino correctamente.'}
+
+
+def send_credentials(db: Session, portal_account_id: UUID4, request: SendCredentialsRequest, background_tasks: BackgroundTasks):
+    account = db.query(CustomerPortalAccount).filter(CustomerPortalAccount.id == portal_account_id).first()
+    if not account:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f'La cuenta de portal con el id {portal_account_id} no esta disponible.')
+
+    # Get credentials account and send by email.
+    conf = mail.conf
+    data = {'name': account.name, 'username': account.username, 'password': account.password}
+
+    message = MessageSchema(
+        subject="Credenciales Portal Clientes",
+        recipients=[request.email],
+        template_body=data,
+        subtype='html'
+    )
+
+    fm = FastMail(conf)
+    background_tasks.add_task(fm.send_message, message, template_name='mail_welcome_portal.html')
+
+    return SendCredentialsResponse(detail='Se ha enviado las credenciales de acceso a la cuenta de correo del cliente.')
