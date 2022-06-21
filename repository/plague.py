@@ -25,8 +25,8 @@ def create(db: Session, request: PlagueRequest, authorize: AuthJWT):
         plague_category_id=request.plague_category_id,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Plague, last_id, model_name)
 
 
 def update(db: Session, request: PlagueUpdateRequest, model_id: UUID4):

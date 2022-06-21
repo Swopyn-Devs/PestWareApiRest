@@ -24,8 +24,8 @@ def create(db: Session, request: StatusRequest):
         key_string=request.key_string,
         module=request.module
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Status, last_id, model_name)
 
 
 def update(db: Session, request: StatusRequest, model_id: UUID4):

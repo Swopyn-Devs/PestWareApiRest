@@ -49,8 +49,8 @@ def create(db: Session, request: ServiceTypeRequest, authorize: AuthJWT):
         indication_id=request.indication_id,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, ServiceType, last_id, model_name)
 
 
 def update(db: Session, request: ServiceTypeUpdateRequest, model_id: UUID4):

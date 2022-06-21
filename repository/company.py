@@ -16,8 +16,10 @@ model_name = 'empresa'
 
 def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
     data = get_all_data(db, Company, authorize, 'all', False)
-    for company in data:
-        data.append(map_s3_url(company))
+    aux = 0
+    for d in data:
+        data[aux] = map_s3_url(d)
+        aux += 1
 
     if paginate_param:
         return paginate(data)
@@ -28,13 +30,9 @@ def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
     return paginate(data, Params(size=data_size))
 
 
-def retrieve(db: Session, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id).first()
-    if not company:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
-    return map_s3_url(company)
+def retrieve(db: Session, model_id: UUID4):
+    data = get_data(db, Company, model_id, model_name)
+    return map_s3_url(data)
 
 
 def update(db: Session, request: CompanyRequest, company_id: UUID4):
@@ -134,12 +132,20 @@ def delete(db: Session, company_id: UUID4):
 
 
 def map_s3_url(company: Company):
-    if company.document_logo is not None:
-        company.document_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_logo}"
-    if company.document_stamp is not None:
-        company.document_stamp = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_stamp}"
-    if company.web_logo is not None:
-        company.web_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.web_logo}"
+    if type(company) is dict:
+        if company['document_logo'] is not None:
+            company['document_logo'] = f"{config('AWS_S3_URL_COMPANIES')}/{company['document_logo']}"
+        if company['document_stamp'] is not None:
+            company['document_stamp'] = f"{config('AWS_S3_URL_COMPANIES')}/{company['document_stamp']}"
+        if company['web_logo'] is not None:
+            company['web_logo'] = f"{config('AWS_S3_URL_COMPANIES')}/{company['web_logo']}"
+    else:
+        if company.document_logo is not None:
+            company.document_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_logo}"
+        if company.document_stamp is not None:
+            company.document_stamp = f"{config('AWS_S3_URL_COMPANIES')}/{company.document_stamp}"
+        if company.web_logo is not None:
+            company.web_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.web_logo}"
 
     return company
 

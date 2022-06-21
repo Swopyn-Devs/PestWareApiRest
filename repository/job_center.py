@@ -1,31 +1,42 @@
+from utils.functions import *
 from decouple import config
 from fastapi import HTTPException, status, UploadFile
 from fastapi_pagination import paginate
 from pydantic import UUID4
 from slugify import slugify
 from sqlalchemy.orm import Session
+from fastapi_jwt_auth import AuthJWT
 
 from models.job_center import JobCenter
 from schemas.job_center import JobCenterRequest
 from services import aws
 
+model_name = 'centro de trabajo'
 
-def get_all(db: Session):
-    job_centers = db.query(JobCenter).all()
-    data = []
-    for job_center in job_centers:
-        data.append(map_s3_url(job_center))
 
-    return paginate(data)
+def get_model_name():
+    return model_name
+
+
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    data = get_all_data(db, JobCenter, authorize, 'all', False)
+    aux = 0
+    for d in data:
+        data[aux] = map_s3_url(d)
+        aux += 1
+
+    if paginate_param:
+        return paginate(data)
+
+    data_size = len(data)
+    if data_size <= 0:
+        data_size = 1
+    return paginate(data, Params(size=data_size))
 
 
 def retrieve(db: Session, job_center_id: UUID4):
-    job_center = db.query(JobCenter).filter(JobCenter.id == job_center_id).first()
-    if not job_center:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El centro de trabajo con el id {job_center_id} no está disponible.')
-
-    return map_s3_url(job_center)
+    data = get_data(db, JobCenter, job_center_id, model_name)
+    return map_s3_url(data)
 
 
 def create(db: Session, request: JobCenterRequest):
@@ -98,8 +109,12 @@ def delete(db: Session, job_center_id: UUID4):
 
 
 def map_s3_url(job_center: JobCenter):
-    if job_center.sanitary_license is not None:
-        job_center.sanitary_license = f"{config('AWS_S3_URL_COMPANIES')}/{job_center.sanitary_license}"
+    if type(job_center) is dict:
+        if job_center['sanitary_license'] is not None:
+            job_center['sanitary_license'] = f"{config('AWS_S3_URL_COMPANIES')}/{job_center['sanitary_license']}"
+    else:
+        if job_center.sanitary_license is not None:
+            job_center.sanitary_license = f"{config('AWS_S3_URL_COMPANIES')}/{job_center.sanitary_license}"
 
     return job_center
 

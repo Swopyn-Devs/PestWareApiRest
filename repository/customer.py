@@ -1,3 +1,5 @@
+from utils.functions import *
+
 from fastapi import HTTPException, status
 from fastapi_pagination import paginate
 from fastapi_jwt_auth import AuthJWT
@@ -37,12 +39,8 @@ def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name
 
 
 def retrieve(db: Session, customer_id: UUID4):
-    customer = db.query(Customer).filter(Customer.id == customer_id).filter(Customer.is_deleted == False).first()
-    if not customer:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El cliente con el id {customer_id} no esta disponible.')
-
-    return response_customer(db, customer)
+    data = get_data(db, Customer, customer_id, model_name)
+    return response_customer(db, data)
 
 
 def create(db: Session, request: CustomerRequest):

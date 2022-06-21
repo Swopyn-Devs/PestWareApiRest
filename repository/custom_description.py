@@ -25,8 +25,8 @@ def create(db: Session, request: CustomDescriptionRequest, authorize: AuthJWT):
         description=request.description,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, CustomDescription, last_id, model_name)
 
 
 def update(db: Session, request: CustomDescriptionUpdateRequest, model_id: UUID4):

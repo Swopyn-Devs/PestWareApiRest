@@ -6,6 +6,7 @@ from fastapi_pagination import paginate
 from fastapi_mail import FastMail, MessageSchema
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from fastapi_jwt_auth import AuthJWT
 
 from repository.base import BaseRepo
 from models.employee import Employee
@@ -20,22 +21,26 @@ from utils.functions import *
 model_name = 'empleado'
 
 
-def get_all(db: Session):
-    employees = BaseRepo.get_all(db, Employee)
-    data = []
-    for employee in employees:
-        data.append(map_s3_url(employee))
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
+    data = get_all_data(db, Employee, authorize, 'all', False)
+    aux = 0
+    for d in data:
+        data[aux] = map_s3_url(d)
+        aux += 1
 
-    return paginate(data)
+    if paginate_param:
+        return paginate(data)
+
+    data_size = len(data)
+    if data_size <= 0:
+        data_size = 1
+    return paginate(data, Params(size=data_size))
+
 
 
 def retrieve(db: Session, employee_id: UUID4):
-    employee = BaseRepo.retrieve_by_id(db, Employee, employee_id)
-    if not employee:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El empleado con el id {employee_id} no está disponible.')
-
-    return map_s3_url(employee)
+    data = get_data(db, Employee, employee_id, model_name)
+    return map_s3_url(data)
 
 
 def create(db: Session, request: EmployeeRequest, background_tasks: BackgroundTasks):
@@ -184,10 +189,16 @@ def delete(db: Session, employee_id: UUID4):
 
 
 def map_s3_url(employee: Employee):
-    if employee.avatar is not None:
-        employee.avatar = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.avatar}"
-    if employee.signature is not None:
-        employee.signature = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.signature}"
+    if type(employee) is dict:
+        if employee.avatar is not None:
+            employee.avatar = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.avatar}"
+        if employee.signature is not None:
+            employee.signature = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.signature}"
+    else:
+        if employee.avatar is not None:
+            employee.avatar = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.avatar}"
+        if employee.signature is not None:
+            employee.signature = f"{config('AWS_S3_URL_EMPLOYEES')}/{employee.signature}"
 
     return employee
 

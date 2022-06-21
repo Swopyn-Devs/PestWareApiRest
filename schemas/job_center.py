@@ -38,7 +38,7 @@ class JobCenterResponse(BaseModel):
                                example=ex_business_name)
     health_manager: Optional[str] = Field(title=title_health_manager, description=desc_health_manager, max_length=255,
                                           min_length=3, example=ex_health_manager)
-    company_id: UUID4 = Field(title=title_company_id, description=desc_company_id, example=ex_timezone)
+    company_id: CompanyResponse
     taxpayer_registration: Optional[str] = Field(title=title_taxpayer_registration,
                                                  description=desc_taxpayer_registration,
                                                  example=ex_taxpayer_registration)

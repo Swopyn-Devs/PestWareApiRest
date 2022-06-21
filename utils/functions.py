@@ -14,6 +14,8 @@ from models.price_list_price import PriceListPrice
 from models.plague import Plague
 from models.plague_category import PlagueCategory
 from models.indication import Indication
+from models.company import Company
+from models.catalog import Country
 from models.user import User
 
 import pandas as pd
@@ -32,13 +34,17 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
         data = query.all()
 
     # set data model to foreign field
-    for record in data:
+    aux = 0
+    data_main = data
+    for record in data_main:
         data2 = object_as_dict(record)
         for field in data2:
             model2 = get_model(field)
             if model2 != False:
-                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False, False)
-                setattr(record, field, data_model)
+                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                data_main[aux] = update_field(data_main[aux], field, data_model)
+        aux += 1
+    data = data_main
 
     if paginate_param == True:
         return paginate(data)
@@ -56,6 +62,7 @@ def insert_data(db, request_data):
         db.add(request_data)
         db.commit()
         db.refresh(request_data)
+        return request_data.id
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
@@ -101,21 +108,25 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
         if not data.first():
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail=detail_message(model_name, model_id))
+        return data
     else:
         data = query.first()
         if not data:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail=detail_message(model_name, model_id))
 
+    data = query.all()
+
     # set data model to foreign field
     if foreign:
-        data2 = object_as_dict(data)
-        for field in data2:
-            model2 = get_model(field)
-            if model2 != False:
-                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
-                setattr(data, field, data_model)
-
+        for record in data:
+            data2 = object_as_dict(record)
+            for field in data2:
+                model2 = get_model(field)
+                if model2 != False:
+                    data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                    data2[field] = data_model
+        return data2
     return data
 
 
@@ -215,5 +226,26 @@ def get_model(field_name_id):
         return [PlagueCategory, 'categoría de plaga']
     elif field_name_id == 'indication_id':
         return [Indication, 'indicación']
+    elif field_name_id == 'company_id':
+        return [Company, 'empresa']
+    elif field_name_id == 'country_id':
+        return [Country, 'país']
 
     return False
+
+
+def update_field(data, field_name_id, data_model):
+    if field_name_id == 'job_center_id':
+        data.job_center_id = data_model
+    elif field_name_id == 'country_id':
+        data.country_id = data_model
+    elif field_name_id == 'service_type_id':
+        data.service_type_id = data_model
+    elif field_name_id == 'customer_id':
+        data.customer_id = data_model
+    elif field_name_id == 'employee_id':
+        data.employee_id = data_model
+    elif field_name_id == 'origin_source_id':
+        data.origin_source_id = data_model
+
+    return data

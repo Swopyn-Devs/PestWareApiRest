@@ -32,8 +32,8 @@ def create(db: Session, request: SupplierRequest, authorize: AuthJWT):
         taxpayer_registration=request.taxpayer_registration,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Supplier, last_id, model_name)
 
 
 def update(db: Session, request: SupplierUpdateRequest, model_id: UUID4):

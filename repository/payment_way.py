@@ -25,8 +25,8 @@ def create(db: Session, request: PaymentWayRequest, authorize: AuthJWT):
         credit_days=request.credit_days,
         job_center_id=employee.job_center_id,
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, PaymentWay, last_id, model_name)
 
 
 def update(db: Session, request: PaymentWayUpdateRequest, model_id: UUID4):
