@@ -32,6 +32,7 @@ from routers import price_lists
 from routers import suppliers
 from routers import status as status_router
 from routers import quotes
+from routers import customer_portal_accounts
 
 router = APIRouter()
 
@@ -40,6 +41,7 @@ router.include_router(companies.router)
 router.include_router(job_centers.router)
 router.include_router(employees.router)
 router.include_router(customers.router)
+router.include_router(customer_portal_accounts.router)
 router.include_router(catalogs.router)
 router.include_router(job_titles.router)
 router.include_router(taxes.router)
