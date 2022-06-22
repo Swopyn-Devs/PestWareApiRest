@@ -16,6 +16,7 @@ from models.plague_category import PlagueCategory
 from models.indication import Indication
 from models.company import Company
 from models.catalog import Country
+from models.job_title import JobTitle
 from models.user import User
 
 import pandas as pd
@@ -93,10 +94,10 @@ def update_delete(db, model, model_id, model_name, filters=False):
 
 
 def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False, is_deleted=True, foreign=True):
+    query = db.query(model)
+
     if model_id:
-        query = db.query(model).filter(model.id == model_id)
-    else:
-        query = db.query(model)
+        query = query.filter(model.id == model_id)
 
     if is_deleted:
         query = query.filter(model.is_deleted == False)
@@ -230,6 +231,8 @@ def get_model(field_name_id):
         return [Company, 'empresa']
     elif field_name_id == 'country_id':
         return [Country, 'país']
+    elif field_name_id == 'job_title_id':
+        return [JobTitle, 'puesto']
 
     return False
 
@@ -247,5 +250,11 @@ def update_field(data, field_name_id, data_model):
         data.employee_id = data_model
     elif field_name_id == 'origin_source_id':
         data.origin_source_id = data_model
+    elif field_name_id == 'country_id':
+        data.country_id = data_model
+    elif field_name_id == 'job_title_id':
+        data.job_title_id = data_model
+    elif field_name_id == 'company_id':
+        data.company_id = data_model
 
     return data
