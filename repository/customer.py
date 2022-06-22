@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from models.customer import Customer
 from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
+import repository.job_center as job_center_repo
 from utils import folios, functions
 
 
@@ -35,6 +36,7 @@ def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name
 
     for customer in customers.all():
         data.append(response_customer(db, customer))
+
     return paginate(data)
 
 
@@ -105,29 +107,57 @@ def get_total_branches(db: Session, customer_id: UUID4):
 
 
 def response_customer(db, customer):
-    return CustomerResponse(
-        id=customer.id,
-        name=customer.name,
-        folio=customer.folio,
-        phone=customer.phone,
-        email=customer.email,
-        contact_name=customer.contact_name,
-        contact_phone=customer.contact_phone,
-        contact_email=customer.contact_email,
-        address=customer.address,
-        is_main=customer.is_main,
-        main_customer_id=customer.main_customer_id,
-        job_center_id=customer.job_center_id,
-        total_branches=get_total_branches(db, customer.id),
-        total_quotes=23,
-        total_scheduled_services=68,
-        total_completed_services=140,
-        total_canceled_services=4,
-        quotes_balance=167421.28,
-        scheduled_services_balance=83026.00,
-        collected_balance=217021.00,
-        past_due_balance=4000.13,
-        is_active=customer.is_active,
-        created_at=customer.created_at,
-        updated_at=customer.updated_at
-    )
+    if type(customer) is dict:
+        return CustomerResponse(
+            id=customer['id'],
+            name=customer['name'],
+            folio=customer['folio'],
+            phone=customer['phone'],
+            email=customer['email'],
+            contact_name=customer['contact_name'],
+            contact_phone=customer['contact_phone'],
+            contact_email=customer['contact_email'],
+            address=customer['address'],
+            is_main=customer['is_main'],
+            main_customer_id=customer['main_customer_id'],
+            job_center_id=customer['job_center_id'],
+            total_branches=get_total_branches(db, customer['id']),
+            total_quotes=23,
+            total_scheduled_services=68,
+            total_completed_services=140,
+            total_canceled_services=4,
+            quotes_balance=167421.28,
+            scheduled_services_balance=83026.00,
+            collected_balance=217021.00,
+            past_due_balance=4000.13,
+            is_active=customer['is_active'],
+            created_at=customer['created_at'],
+            updated_at=customer['updated_at']
+        )
+    else:
+        return CustomerResponse(
+            id=customer.id,
+            name=customer.name,
+            folio=customer.folio,
+            phone=customer.phone,
+            email=customer.email,
+            contact_name=customer.contact_name,
+            contact_phone=customer.contact_phone,
+            contact_email=customer.contact_email,
+            address=customer.address,
+            is_main=customer.is_main,
+            main_customer_id=customer.main_customer_id,
+            job_center_id=job_center_repo.retrieve(db, customer.job_center_id),
+            total_branches=get_total_branches(db, customer.id),
+            total_quotes=23,
+            total_scheduled_services=68,
+            total_completed_services=140,
+            total_canceled_services=4,
+            quotes_balance=167421.28,
+            scheduled_services_balance=83026.00,
+            collected_balance=217021.00,
+            past_due_balance=4000.13,
+            is_active=customer.is_active,
+            created_at=customer.created_at,
+            updated_at=customer.updated_at
+        )
