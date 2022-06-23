@@ -6,6 +6,7 @@ from fastapi_jwt_auth import AuthJWT
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 
+from models.job_center import JobCenter
 from models.customer import Customer
 from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
 import repository.job_center as job_center_repo
@@ -41,7 +42,7 @@ def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name
 
 
 def retrieve(db: Session, customer_id: UUID4):
-    data = get_data(db, Customer, customer_id, model_name)
+    data = functions.get_data(db, Customer, customer_id, model_name)
     return response_customer(db, data)
 
 
@@ -108,6 +109,11 @@ def get_total_branches(db: Session, customer_id: UUID4):
 
 def response_customer(db, customer):
     if type(customer) is dict:
+        if customer['email'] == 'None':
+            customer['email'] = None
+        if customer['main_customer_id'] == 'None':
+            customer['main_customer_id'] = None
+
         return CustomerResponse(
             id=customer['id'],
             name=customer['name'],
@@ -147,7 +153,7 @@ def response_customer(db, customer):
             address=customer.address,
             is_main=customer.is_main,
             main_customer_id=customer.main_customer_id,
-            job_center_id=job_center_repo.retrieve(db, customer.job_center_id),
+            job_center_id=functions.get_data(db, JobCenter, customer.job_center_id, 'centro de trabajo'),
             total_branches=get_total_branches(db, customer.id),
             total_quotes=23,
             total_scheduled_services=68,

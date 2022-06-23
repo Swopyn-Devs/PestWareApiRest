@@ -19,6 +19,8 @@ from models.catalog import Country
 from models.job_title import JobTitle
 from models.user import User
 
+from repository import customer
+
 import pandas as pd
 import base64
 import uuid
@@ -43,6 +45,8 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
             model2 = get_model(field)
             if model2 != False:
                 data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                if field == 'customer_id':
+                        data_model = customer.response_customer(db, data_model)
                 data_main[aux] = update_field(data_main[aux], field, data_model)
         aux += 1
     data = data_main
@@ -126,6 +130,8 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
                 model2 = get_model(field)
                 if model2 != False:
                     data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                    if field == 'customer_id':
+                        data_model = customer.response_customer(db, data_model)
                     data2[field] = data_model
         return data2
     return data
@@ -256,5 +262,9 @@ def update_field(data, field_name_id, data_model):
         data.job_title_id = data_model
     elif field_name_id == 'company_id':
         data.company_id = data_model
+    elif field_name_id == 'plague_category_id':
+        data.plague_category_id = data_model
+    elif field_name_id == 'indication_id':
+        data.indication_id = data_model
 
     return data
