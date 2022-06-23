@@ -25,8 +25,8 @@ def create(db: Session, request: ConceptRequest, authorize: AuthJWT):
         type=request.type,
         job_center_id=employee.job_center_id,
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Concept, last_id, model_name)
 
 
 def update(db: Session, request: ConceptUpdateRequest, model_id: UUID4):

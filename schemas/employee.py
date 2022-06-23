@@ -1,6 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel, UUID4, EmailStr, Field
 from documentation.employees import *
+from schemas.job_center import JobCenterResponse
+from schemas.job_title import JobTitleResponse
+from schemas.company import CompanyResponse
 
 
 class EmployeeRequest(BaseModel):
@@ -18,9 +21,9 @@ class EmployeeRequest(BaseModel):
 class EmployeeResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
-    company_id: UUID4 = Field(title=title_company_id, description=desc_company_id, example=ex_company_id)
-    job_center_id: UUID4 = Field(title=title_job_center_id, description=desc_job_center_id, example=ex_job_center_id)
-    job_title_id: UUID4 = Field(title=title_job_title_id, description=desc_job_title_id, example=ex_job_title_id)
+    company_id: CompanyResponse
+    job_center_id: JobCenterResponse
+    job_title_id: JobTitleResponse
     avatar: Optional[str] = None
     signature: Optional[str] = None
     color: Optional[str] = None

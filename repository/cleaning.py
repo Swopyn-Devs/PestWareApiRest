@@ -24,8 +24,8 @@ def create(db: Session, request: CleaningRequest, authorize: AuthJWT):
         name=request.name,
         job_center_id=employee.job_center_id,
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Cleaning, last_id, model_name)
 
 
 def update(db: Session, request: CleaningUpdateRequest, model_id: UUID4):

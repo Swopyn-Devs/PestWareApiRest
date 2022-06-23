@@ -26,8 +26,8 @@ def create(db: Session, request: ExtraRequest, authorize: AuthJWT):
         quantity=request.quantity,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Extra, last_id, model_name)
 
 
 def update(db: Session, request: ExtraUpdateRequest, model_id: UUID4):

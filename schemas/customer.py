@@ -1,7 +1,7 @@
 from typing import Optional
 from datetime import datetime
-
 from pydantic import BaseModel, UUID4, EmailStr
+from schemas.job_center import JobCenterResponse
 
 
 class CustomerRequest(BaseModel):
@@ -45,7 +45,7 @@ class CustomerResponse(BaseModel):
     address: Optional[str]
     is_main: bool
     main_customer_id: Optional[UUID4] = None
-    job_center_id: UUID4
+    job_center_id: JobCenterResponse
     total_branches: int
     total_quotes: int
     total_scheduled_services: int

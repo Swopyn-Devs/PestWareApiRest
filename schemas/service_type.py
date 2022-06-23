@@ -1,6 +1,8 @@
 from typing import Optional
 from pydantic import BaseModel, UUID4, Field
 from documentation.service_types import *
+from schemas.job_center import JobCenterResponse
+from schemas.indication import IndicationResponse
 
 
 class ServiceTypeRequest(BaseModel):
@@ -36,8 +38,8 @@ class ServiceTypeResponse(BaseModel):
     follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     disinfection: bool = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
     cover: Optional[str] = None
-    indication_id: UUID4 = Field(title=title_indication_id, description=desc_indication_id, example=ex_indication_id)
-    job_center_id: UUID4 = Field(title=title_job_center_id, description=desc_job_center_id, example=ex_job_center_id)
+    indication_id: IndicationResponse
+    job_center_id: JobCenterResponse
 
     class Config:
         orm_mode = True

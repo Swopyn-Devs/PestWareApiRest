@@ -26,8 +26,8 @@ def create(db: Session, request: DiscountRequest, authorize: AuthJWT):
         percentage=request.percentage,
         job_center_id=employee.job_center_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, Discount, last_id, model_name)
 
 
 def update(db: Session, request: DiscountUpdateRequest, model_id: UUID4):
