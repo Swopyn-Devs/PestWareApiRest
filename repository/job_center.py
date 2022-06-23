@@ -1,7 +1,7 @@
-from utils.functions import *
+from utils import functions
 from decouple import config
 from fastapi import HTTPException, status, UploadFile
-from fastapi_pagination import paginate
+from fastapi_pagination import paginate, Params
 from pydantic import UUID4
 from slugify import slugify
 from sqlalchemy.orm import Session
@@ -14,12 +14,8 @@ from services import aws
 model_name = 'centro de trabajo'
 
 
-def get_model_name():
-    return model_name
-
-
 def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
-    data = get_all_data(db, JobCenter, authorize, 'all', False)
+    data = functions.get_all_data(db, JobCenter, authorize, 'all', False)
     aux = 0
     for d in data:
         data[aux] = map_s3_url(d)
@@ -35,7 +31,7 @@ def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
 
 
 def retrieve(db: Session, job_center_id: UUID4):
-    data = get_data(db, JobCenter, job_center_id, model_name)
+    data = functions.get_data(db, JobCenter, job_center_id, model_name)
     return map_s3_url(data)
 
 
@@ -57,55 +53,30 @@ def create(db: Session, request: JobCenterRequest):
         messenger=request.messenger,
         timezone=request.timezone
     )
-    db.add(new_job_center)
-    db.commit()
-    db.refresh(new_job_center)
 
-    return new_job_center
+    last_id = functions.insert_data(db, new_job_center)
+    return functions.get_data(db, JobCenter, last_id, model_name)
 
 
-def update(db: Session, request: JobCenterRequest, job_center_id: UUID4):
-    job_center = db.query(JobCenter).filter(JobCenter.id == job_center_id)
-    if not job_center.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El centro de trabajo con el id {job_center_id} no está disponible.')
-
-    job_center.update(request.dict())
-    db.commit()
-
-    return job_center.first()
+def update(db: Session, request: JobCenterRequest, model_id: UUID4):
+    return functions.update_data(db, JobCenter, model_id, model_name, request.dict())
 
 
-def update_sanitary_license(db: Session, license_pdf: UploadFile, job_center_id: UUID4):
-    job_center = db.query(JobCenter).filter(JobCenter.id == job_center_id)
-    if not job_center.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El centro de trabajo con el id {job_center_id} no está disponible.')
-
+def update_sanitary_license(db: Session, license_pdf: UploadFile, model_id: UUID4):
     validate_pdf(license_pdf)
+    key = f'sanitary_licenses/{model_id}.pdf'
+    data = functions.update_data(db, JobCenter, model_id, model_name, {'sanitary_license': key})
 
     # Upload file to AWS S3
-    key = f'sanitary_licenses/{job_center_id}.pdf'
     if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, license_pdf):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para documentos.')
 
-    job_center.update({'sanitary_license': key})
-    db.commit()
-
-    return map_s3_url(job_center.first())
+    return map_s3_url(data)
 
 
-def delete(db: Session, job_center_id: UUID4):
-    job_center = db.query(JobCenter).filter(JobCenter.id == job_center_id)
-    if not job_center.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'El centro de trabajo con el id {job_center_id} no está disponible.')
-
-    job_center.update({'is_deleted': True})
-    db.commit()
-
-    return {'detail': 'El centro de trabajo se elimino correctamente.'}
+def delete(db: Session, model_id: UUID4):
+    return functions.update_delete(db, JobCenter, model_id, model_name)
 
 
 def map_s3_url(job_center: JobCenter):
