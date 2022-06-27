@@ -27,7 +27,10 @@ from models.indication import *
 from models.custom_description import *
 from models.rejection_reason import *
 from models.price_list import *
+from models.price_list_plague import *
+from models.price_list_price import *
 from models.supplier import *
 from models.status import *
 from models.quote import *
+from models.quote_plague import *
 from models.customer_portal_account import *
