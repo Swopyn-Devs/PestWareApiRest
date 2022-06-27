@@ -13,6 +13,7 @@ class ServiceType(Base):
     certificate_expiration_days = Column(SmallInteger, nullable=False)
     follow_up_days = Column(SmallInteger, nullable=False)
     disinfection = Column(Boolean, nullable=False, default=False)
+    show_price = Column(Boolean, nullable=False, default=True)
     cover = Column(String, nullable=True)
     indication_id = Column(UUID(as_uuid=True), nullable=False)
     job_center_id = Column(UUID(as_uuid=True), nullable=False)

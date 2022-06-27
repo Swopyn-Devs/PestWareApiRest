@@ -12,7 +12,7 @@ class PriceList(Base):
     key = Column(String, nullable=False)
     hierarchy = Column(SmallInteger, nullable=False)
     cost = Column(Numeric, nullable=False)
-    show_price = Column(Boolean, nullable=False, default=True)
+    min_cost = Column(Numeric, nullable=False)
     service_type_id = Column(UUID(as_uuid=True), nullable=False)
     job_center_id = Column(UUID(as_uuid=True), nullable=False)
     is_deleted = Column(Boolean, default=False)

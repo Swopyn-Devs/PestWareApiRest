@@ -46,6 +46,7 @@ def create(db: Session, request: ServiceTypeRequest, authorize: AuthJWT):
         certificate_expiration_days=request.certificate_expiration_days,
         follow_up_days=request.follow_up_days,
         disinfection=request.disinfection,
+        show_price=request.show_price,
         indication_id=request.indication_id,
         job_center_id=employee.job_center_id
     )

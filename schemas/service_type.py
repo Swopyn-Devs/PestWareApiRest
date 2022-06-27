@@ -11,6 +11,7 @@ class ServiceTypeRequest(BaseModel):
     certificate_expiration_days: int = Field(title=title_certificate_expiration_days, description=desc_certificate_expiration_days, example=ex_certificate_expiration_days, ge=0)
     follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     disinfection: Optional[bool] = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
+    show_price: Optional[bool] = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
     indication_id: UUID4 = Field(title=title_indication_id, description=desc_indication_id, example=ex_indication_id)
 
     class Config:
@@ -23,6 +24,7 @@ class ServiceTypeUpdateRequest(BaseModel):
     certificate_expiration_days: int = Field(title=title_certificate_expiration_days, description=desc_certificate_expiration_days, example=ex_certificate_expiration_days, ge=0)
     follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     disinfection: bool = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
+    show_price: Optional[bool] = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
     indication_id: UUID4 = Field(title=title_indication_id, description=desc_indication_id, example=ex_indication_id)
     job_center_id: UUID4 = Field(title=title_job_center_id, description=desc_job_center_id, example=ex_job_center_id)
 
@@ -37,6 +39,7 @@ class ServiceTypeResponse(BaseModel):
     certificate_expiration_days: int = Field(title=title_certificate_expiration_days, description=desc_certificate_expiration_days, example=ex_certificate_expiration_days, ge=0)
     follow_up_days: int = Field(title=title_follow_up_days, description=desc_follow_up_days, example=ex_follow_up_days, ge=0)
     disinfection: bool = Field(title=title_disinfection, description=desc_disinfection, example=ex_disinfection)
+    show_price: bool = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
     cover: Optional[str] = None
     indication_id: IndicationResponse
     job_center_id: JobCenterResponse
