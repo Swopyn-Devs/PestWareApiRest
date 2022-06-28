@@ -34,3 +34,4 @@ from models.status import *
 from models.quote import *
 from models.quote_plague import *
 from models.customer_portal_account import *
+from models.business_activity import *

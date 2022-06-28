@@ -33,6 +33,7 @@ from routers import suppliers
 from routers import status as status_router
 from routers import quotes
 from routers import customer_portal_accounts
+from routers import business_activities
 
 router = APIRouter()
 
@@ -69,3 +70,4 @@ router.include_router(price_lists.router)
 router.include_router(suppliers.router)
 router.include_router(status_router.router)
 router.include_router(quotes.router)
+router.include_router(business_activities.router)
