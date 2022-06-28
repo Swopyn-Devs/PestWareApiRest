@@ -10,7 +10,6 @@ from models.customer import Customer
 from models.service_type import ServiceType
 from models.price_list import PriceList
 from models.price_list_plague import PriceListPlague
-from models.price_list_price import PriceListPrice
 from models.plague import Plague
 from models.plague_category import PlagueCategory
 from models.indication import Indication
@@ -225,8 +224,6 @@ def get_model(field_name_id):
         return [PriceList, 'lista de precio']
     elif field_name_id == 'price_list_plague_id':
         return [PriceListPlague, 'plaga de lista de precio']
-    elif field_name_id == 'price_list_price_id':
-        return [PriceListPrice, 'precio de lista de precio']
     elif field_name_id == 'plague_id':
         return [Plague, 'plaga']
     elif field_name_id == 'plague_category_id':

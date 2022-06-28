@@ -7,10 +7,8 @@ from typing import Optional
 
 from database import get_db
 from repository import price_list
-from repository import price_list_price
 from repository import price_list_plague
 from schemas.price_list import PriceListRequest, PriceListResponse
-from schemas.price_list_price import PriceListPriceRequest, PriceListPriceResponse
 from schemas.price_list_plague import PriceListPlagueRequest, PriceListPlagueResponse
 
 router = APIRouter(
@@ -25,12 +23,6 @@ async def index(paginate: Optional[bool] = Query(None), db: Session = Depends(ge
     return price_list.get_all(db, authorize, paginate)
 
 
-@router.get('/{price_list_id}/prices', status_code=status.HTTP_200_OK, response_model=Page[PriceListPriceResponse])
-async def index_price(price_list_id: UUID4, paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list_price.get_all(db, authorize, paginate, price_list_id)
-
-
 @router.get('/{price_list_id}/plagues', status_code=status.HTTP_200_OK, response_model=Page[PriceListPlagueResponse])
 async def index_plague(price_list_id: UUID4, paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
@@ -41,12 +33,6 @@ async def index_plague(price_list_id: UUID4, paginate: Optional[bool] = Query(No
 async def show(price_list_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return price_list.retrieve(db, price_list_id)
-
-
-@router.get('/prices/{price_list_price_id}', status_code=status.HTTP_200_OK, response_model=PriceListPriceResponse)
-async def show_price(price_list_price_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list_price.retrieve(db, price_list_price_id)
 
 
 @router.get('/plagues/{price_list_plague_id}', status_code=status.HTTP_200_OK, response_model=PriceListPlagueResponse)
@@ -61,12 +47,6 @@ async def store(request: PriceListRequest, db: Session = Depends(get_db), author
     return price_list.create(db, request, authorize)
 
 
-@router.post('/{price_list_id}/prices', status_code=status.HTTP_201_CREATED, response_model=PriceListPriceResponse)
-async def store_price(price_list_id: UUID4, request: PriceListPriceRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list_price.create(db, request, price_list_id)
-
-
 @router.post('/{price_list_id}/plagues', status_code=status.HTTP_201_CREATED, response_model=PriceListPlagueResponse)
 async def store_plague(price_list_id: UUID4, request: PriceListPlagueRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
@@ -79,22 +59,10 @@ async def update(price_list_id: UUID4, request: PriceListRequest, db: Session = 
     return price_list.update(db, request, price_list_id)
 
 
-@router.put('/prices/{price_list_price_id}', status_code=status.HTTP_202_ACCEPTED, response_model=PriceListPriceResponse)
-async def update_price(price_list_price_id: UUID4, request: PriceListPriceRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list_price.update(db, request, price_list_price_id)
-
-
 @router.delete('/{price_list_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def destroy(price_list_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return price_list.delete(db, price_list_id)
-
-
-@router.delete('/prices/{price_list_price_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def destroy_price(price_list_price_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
-    authorize.jwt_required()
-    return price_list_price.delete(db, price_list_price_id)
 
 
 @router.delete('/plagues/{price_list_plague_id}', status_code=status.HTTP_204_NO_CONTENT)

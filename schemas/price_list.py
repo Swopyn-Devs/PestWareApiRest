@@ -10,7 +10,7 @@ class PriceListRequest(BaseModel):
     key: str = Field(title=title_key, description=desc_key, max_length=255, min_length=3, example=ex_key)
     hierarchy: int = Field(title=title_hierarchy, description=desc_hierarchy, example=ex_hierarchy, ge=1)
     cost: float = Field(title=title_cost, description=desc_cost, example=ex_cost, ge=1)
-    show_price: Optional[bool] = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
+    min_cost: float = Field(title=title_min_cost, description=desc_min_cost, example=ex_min_cost, ge=1)
     service_type_id: UUID4 = Field(title=title_service_type_id, description=desc_service_type_id, example=ex_service_type_id)
 
     class Config:
@@ -23,7 +23,7 @@ class PriceListResponse(BaseModel):
     key: str = Field(title=title_key, description=desc_key, max_length=255, min_length=3, example=ex_key)
     hierarchy: int = Field(title=title_hierarchy, description=desc_hierarchy, example=ex_hierarchy, ge=1)
     cost: float = Field(title=title_cost, description=desc_cost, example=ex_cost, ge=1)
-    show_price: bool = Field(title=title_show_price, description=desc_show_price, example=ex_show_price)
+    min_cost: float = Field(title=title_min_cost, description=desc_min_cost, example=ex_min_cost, ge=1)
     service_type_id: ServiceTypeResponse
     job_center_id: JobCenterResponse
 

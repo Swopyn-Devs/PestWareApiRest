@@ -25,7 +25,7 @@ def create(db: Session, request: PriceListRequest, authorize: AuthJWT):
         key=request.key,
         hierarchy=request.hierarchy,
         cost=request.cost,
-        show_price=request.show_price,
+        min_cost=request.min_cost,
         service_type_id=request.service_type_id,
         job_center_id=employee.job_center_id
     )
