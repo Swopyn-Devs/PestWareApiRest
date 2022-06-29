@@ -2,6 +2,7 @@ from typing import Optional
 from datetime import datetime
 from pydantic import BaseModel, UUID4, EmailStr
 from schemas.job_center import JobCenterResponse
+from schemas.business_activity import BusinessActivityResponse
 
 
 class CustomerRequest(BaseModel):
@@ -14,6 +15,7 @@ class CustomerRequest(BaseModel):
     address: Optional[str]
     is_main: bool
     main_customer_id: Optional[UUID4] = None
+    business_activity_id: UUID4
     job_center_id: UUID4
 
     class Config:
@@ -45,6 +47,7 @@ class CustomerResponse(BaseModel):
     address: Optional[str]
     is_main: bool
     main_customer_id: Optional[UUID4] = None
+    business_activity_id: BusinessActivityResponse
     job_center_id: JobCenterResponse
     total_branches: int
     total_quotes: int

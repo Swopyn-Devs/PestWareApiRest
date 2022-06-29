@@ -18,6 +18,7 @@ class Customer(Base):
     address = Column(String, nullable=True)
     is_main = Column(Boolean, default=True)
     main_customer_id = Column(UUID(as_uuid=True), nullable=True)
+    business_activity_id = Column(UUID(as_uuid=True), nullable=False)
     job_center_id = Column(UUID(as_uuid=True), nullable=False)
     is_active = Column(Boolean, default=True)
     is_deleted = Column(Boolean, default=False)
