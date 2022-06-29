@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 
 from models.job_center import JobCenter
 from models.customer import Customer
+from models.business_activity import BusinessActivity
 from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
 import repository.job_center as job_center_repo
 from utils import folios, functions
@@ -47,8 +48,8 @@ def retrieve(db: Session, customer_id: UUID4):
 
 
 def create(db: Session, request: CustomerRequest):
+    functions.get_data(db, BusinessActivity, request.business_activity_id, 'giro de la empresa')
     folio = folios.customer(db, request.job_center_id, request.main_customer_id, request.is_main)
-
     new_customer = Customer(
         name=request.name,
         folio=folio,
@@ -60,6 +61,7 @@ def create(db: Session, request: CustomerRequest):
         address=request.address,
         is_main=request.is_main,
         main_customer_id=request.main_customer_id,
+        business_activity_id=request.business_activity_id,
         job_center_id=request.job_center_id,
         is_active=True
     )
@@ -127,6 +129,7 @@ def response_customer(db, customer):
             is_main=customer['is_main'],
             main_customer_id=customer['main_customer_id'],
             job_center_id=customer['job_center_id'],
+            business_activity_id=customer['business_activity_id'],
             total_branches=get_total_branches(db, customer['id']),
             total_quotes=23,
             total_scheduled_services=68,
@@ -154,6 +157,7 @@ def response_customer(db, customer):
             is_main=customer.is_main,
             main_customer_id=customer.main_customer_id,
             job_center_id=functions.get_data(db, JobCenter, customer.job_center_id, 'centro de trabajo'),
+            business_activity_id=functions.get_data(db, BusinessActivity, customer.business_activity_id, 'giro de la empresa'),
             total_branches=get_total_branches(db, customer.id),
             total_quotes=23,
             total_scheduled_services=68,

@@ -17,6 +17,7 @@ from models.company import Company
 from models.catalog import Country
 from models.job_title import JobTitle
 from models.user import User
+from models.business_activity import BusinessActivity
 
 from repository import customer
 
@@ -236,6 +237,8 @@ def get_model(field_name_id):
         return [Country, 'país']
     elif field_name_id == 'job_title_id':
         return [JobTitle, 'puesto']
+    elif field_name_id == 'business_activity_id':
+        return [BusinessActivity, 'giro de la empresa']
 
     return False
 
@@ -263,5 +266,7 @@ def update_field(data, field_name_id, data_model):
         data.plague_category_id = data_model
     elif field_name_id == 'indication_id':
         data.indication_id = data_model
+    elif field_name_id == 'business_activity_id':
+        data.business_activity_id = data_model
 
     return data
