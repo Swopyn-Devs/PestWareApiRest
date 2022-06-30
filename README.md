@@ -76,6 +76,8 @@ la comunicación de tu aplicación.
 4. Run in your terminal.
 
    ```shell
+   > sudo apt-get install libpq-dev python3-dev (en ubuntu o para servers)
+
    > pip install -r requirements.txt
    
    > alembic revision --autogenerate -m "Initial"
