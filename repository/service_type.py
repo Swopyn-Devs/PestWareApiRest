@@ -19,6 +19,21 @@ def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
         if item.cover is not None:
             item.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), item.cover)
 
+    # set data model to foreign field
+    aux = 0
+    data_main = data
+    for record in data_main:
+        data2 = object_as_dict(record)
+        for field in data2:
+            model2 = get_model(field)
+            if model2 != False:
+                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                if field == 'customer_id':
+                        data_model = customer.response_customer(db, data_model)
+                data_main[aux] = update_field(data_main[aux], field, data_model)
+        aux += 1
+    data = data_main
+
     if paginate_param == True:
         return paginate(data)
     elif paginate_param == 'all':
