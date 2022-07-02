@@ -15,10 +15,6 @@ model_name = 'tipo de servicio'
 def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
     data = db.query(ServiceType).filter(ServiceType.is_deleted == False).all()
 
-    for item in data:
-        if item.cover is not None:
-            item.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), item.cover)
-
     # set data model to foreign field
     aux = 0
     data_main = data
@@ -47,8 +43,6 @@ def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
 
 def retrieve(db: Session, model_id: UUID4):
     data = get_data(db, ServiceType, model_id, model_name)
-    if data.cover is not None:
-        data.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), data.cover)
     return data
 
 
@@ -86,8 +80,6 @@ def update_cover(db: Session, file: UploadFile, model_id):
     if not aws.upload_image(config('AWS_S3_BUCKET_SERVICE_TYPES'), key, file):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_updated('PDF'))
 
-    if response_update_data.cover is not None:
-        response_update_data.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), response_update_data.cover)
     return response_update_data
 
 
@@ -99,6 +91,4 @@ def delete_cover(db: Session, model_id: UUID4):
         update_data(db, ServiceType, model_id, model_name, {'cover': key})
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_deleted('PDF'))
 
-    if response_update_data.cover is not None:
-        response_update_data.cover = map_s3_url(config('AWS_S3_URL_SERVICE_TYPES'), response_update_data.cover)
     return response_update_data
