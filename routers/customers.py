@@ -57,3 +57,9 @@ async def destroy(customer_id: UUID4, db: Session = Depends(get_db), authorize: 
 async def csv(customer_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return customer.csv(db, customer_id)
+
+
+@router.post('/faker', status_code=status.HTTP_201_CREATED)
+async def store(db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return customer.faker(db)

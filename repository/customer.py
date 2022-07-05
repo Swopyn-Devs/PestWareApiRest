@@ -12,6 +12,7 @@ from models.business_activity import BusinessActivity
 from schemas.customer import CustomerRequest, CustomerRequestUpdated, CustomerResponse, CustomerXlsxResponse
 import repository.job_center as job_center_repo
 from utils import folios, functions
+from fakers import customer as customer_faker
 
 
 model_name = 'cliente'
@@ -103,6 +104,12 @@ def csv(db: Session, model_id: UUID4):
     print(test_data)
     csv_data = functions.create_csv(test_data)
     return csv_data
+
+
+def faker(db: Session):
+    customer_faker.create(db)
+
+    return {'detail': 'Clientes generados correctamente.'}
 
 
 def get_total_branches(db: Session, customer_id: UUID4):
