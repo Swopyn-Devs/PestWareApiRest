@@ -106,8 +106,8 @@ def csv(db: Session, model_id: UUID4):
     return csv_data
 
 
-def faker(db: Session):
-    customer_faker.create(db)
+def faker(db: Session, count: int):
+    customer_faker.create(db, count)
 
     return {'detail': 'Clientes generados correctamente.'}
 
