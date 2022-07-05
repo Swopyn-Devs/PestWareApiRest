@@ -9,8 +9,8 @@ customer_fake = Faker('es_MX')
 Faker.seed(0)
 customer_fake.seed_instance(0)
 
-def create(db: Session):
-    for _ in range(5000):
+def create(db: Session, count: int):
+    for _ in range(count):
         job_center_id = 'be26be0d-d3e0-476d-b506-b2bdbdb3f116'
         business_activity_id = '90821ce9-b1c1-4510-9cc6-a29ed7b4a34d'
         folio = folios.customer(db, job_center_id, False, True)
