@@ -18,6 +18,13 @@ from models.catalog import Country
 from models.job_title import JobTitle
 from models.user import User
 from models.business_activity import BusinessActivity
+from models.extra import Extra
+from models.status import Status
+from models.discount import Discount
+from models.quote import Quote
+from models.quote_plague import QuotePlague
+from models.quote_concept import QuoteConcept
+from models.quote_extra import QuoteExtra
 
 from repository import customer
 
@@ -239,6 +246,20 @@ def get_model(field_name_id):
         return [JobTitle, 'puesto']
     elif field_name_id == 'business_activity_id':
         return [BusinessActivity, 'giro de la empresa']
+    elif field_name_id == 'quote_id':
+        return [Quote, 'cotización']
+    elif field_name_id == 'quote_plague_id':
+        return [QuotePlague, 'plaga de la cotización']
+    elif field_name_id == 'quote_concept_id':
+        return [QuoteConcept, 'concepto de la cotización']
+    elif field_name_id == 'quote_extra_id':
+        return [QuoteExtra, 'extra de la cotización']
+    elif field_name_id == 'status_id':
+        return [Status, 'estatus']
+    elif field_name_id == 'discount_id':
+        return [Discount, 'descuento']
+    elif field_name_id == 'extra_id':
+        return [Extra, 'extra']
 
     return False
 
@@ -268,5 +289,25 @@ def update_field(data, field_name_id, data_model):
         data.indication_id = data_model
     elif field_name_id == 'business_activity_id':
         data.business_activity_id = data_model
+    elif field_name_id == 'quote_id':
+        data.quote_id = data_model
+    elif field_name_id == 'quote_plague_id':
+        data.quote_plague_id = data_model
+    elif field_name_id == 'quote_concept_id':
+        data.quote_concept_id = data_model
+    elif field_name_id == 'quote_extra_id':
+        data.quote_extra_id = data_model
+    elif field_name_id == 'status_id':
+        data.status_id = data_model
+    elif field_name_id == 'price_list_id':
+        data.price_list_id = data_model
+    elif field_name_id == 'price_list_plague_id':
+        data.price_list_plague_id = data_model
+    elif field_name_id == 'discount_id':
+        data.discount_id = data_model
+    elif field_name_id == 'plague_id':
+        data.plague_id = data_model
+    elif field_name_id == 'plague_category_id':
+        data.plague_category_id = data_model
 
     return data

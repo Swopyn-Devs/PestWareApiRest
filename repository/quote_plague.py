@@ -27,8 +27,8 @@ def create(db: Session, request: QuotePlagueRequest, model_id: UUID4):
         quote_id=model_id,
         plague_id=request.plague_id
     )
-    insert_data(db, request_data)
-    return request_data
+    last_id = insert_data(db, request_data)
+    return get_data(db, QuotePlague, last_id, model_name)
 
 
 def update(db: Session, request: QuotePlagueRequest, model_id: UUID4):
