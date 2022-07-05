@@ -20,3 +20,4 @@ pytest
 requests
 alembic
 pandas
+faker
