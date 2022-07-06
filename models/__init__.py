@@ -31,6 +31,8 @@ from models.price_list_plague import *
 from models.supplier import *
 from models.status import *
 from models.quote import *
+from models.quote_concept import *
+from models.quote_extra import *
 from models.quote_plague import *
 from models.customer_portal_account import *
 from models.business_activity import *
