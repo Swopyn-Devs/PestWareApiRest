@@ -105,6 +105,9 @@ def update_delete(db, model, model_id, model_name, filters=False):
 
 
 def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False, is_deleted=True, foreign=True):
+    if model_id is None or model_id == 'None':
+        return None
+
     query = db.query(model)
 
     if model_id:
