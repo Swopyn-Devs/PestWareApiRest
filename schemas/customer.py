@@ -13,6 +13,8 @@ class CustomerRequest(BaseModel):
     contact_phone: Optional[str]
     contact_email: Optional[str]
     address: Optional[str]
+    address_latitude: Optional[float] = None
+    address_longitude: Optional[float] = None
     is_main: bool
     main_customer_id: Optional[UUID4] = None
     business_activity_id: UUID4
@@ -30,6 +32,8 @@ class CustomerRequestUpdated(BaseModel):
     contact_phone: Optional[str]
     contact_email: Optional[str]
     address: Optional[str]
+    address_latitude: Optional[float] = None
+    address_longitude: Optional[float] = None
 
     class Config:
         orm_mode = True
@@ -45,6 +49,8 @@ class CustomerResponse(BaseModel):
     contact_phone: Optional[str]
     contact_email: Optional[str]
     address: Optional[str]
+    address_latitude: Optional[float] = None
+    address_longitude: Optional[float] = None
     is_main: bool
     main_customer_id: Optional[UUID4] = None
     business_activity_id: BusinessActivityResponse

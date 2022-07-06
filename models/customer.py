@@ -16,6 +16,8 @@ class Customer(Base):
     contact_phone = Column(String, nullable=True)
     contact_email = Column(String, nullable=True)
     address = Column(String, nullable=True)
+    address_latitude = Column(Numeric, nullable=True)
+    address_longitude = Column(Numeric, nullable=True)
     is_main = Column(Boolean, default=True)
     main_customer_id = Column(UUID(as_uuid=True), nullable=True)
     business_activity_id = Column(UUID(as_uuid=True), nullable=False)
