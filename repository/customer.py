@@ -60,6 +60,8 @@ def create(db: Session, request: CustomerRequest):
         contact_phone=request.contact_phone,
         contact_email=request.contact_email,
         address=request.address,
+        address_latitude=request.address_latitude,
+        address_longitude=request.address_longitude,
         is_main=request.is_main,
         main_customer_id=request.main_customer_id,
         business_activity_id=request.business_activity_id,
@@ -122,6 +124,10 @@ def response_customer(db, customer):
             customer['email'] = None
         if customer['main_customer_id'] == 'None':
             customer['main_customer_id'] = None
+        if customer['address_latitude'] == 'None':
+            customer['address_latitude'] = None
+        if customer['address_longitude'] == 'None':
+            customer['address_longitude'] = None
 
         return CustomerResponse(
             id=customer['id'],
@@ -133,6 +139,8 @@ def response_customer(db, customer):
             contact_phone=customer['contact_phone'],
             contact_email=customer['contact_email'],
             address=customer['address'],
+            address_latitude=customer['address_latitude'],
+            address_longitude=customer['address_longitude'],
             is_main=customer['is_main'],
             main_customer_id=customer['main_customer_id'],
             job_center_id=customer['job_center_id'],
@@ -161,6 +169,8 @@ def response_customer(db, customer):
             contact_phone=customer.contact_phone,
             contact_email=customer.contact_email,
             address=customer.address,
+            address_latitude=customer.address_latitude,
+            address_longitude=customer.address_longitude,
             is_main=customer.is_main,
             main_customer_id=customer.main_customer_id,
             job_center_id=functions.get_data(db, JobCenter, customer.job_center_id, 'centro de trabajo'),
