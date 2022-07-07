@@ -1,9 +1,11 @@
+from models.tax import Tax
 from utils.functions import *
 from utils import folios
 
 from pydantic import UUID4
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
+from fastapi import HTTPException, status
 
 from models.quote import Quote
 from models.service_type import ServiceType
@@ -14,6 +16,7 @@ from models.employee import Employee
 from models.price_list import PriceList
 from models.job_center import JobCenter
 from schemas.quote import QuoteRequest, QuoteUpdateRequest
+from schemas.quoter import QuoterRequest, QuoterResponse
 
 model_name = 'cotización'
 
@@ -87,3 +90,60 @@ def update(db: Session, request: QuoteUpdateRequest, model_id: UUID4):
 
 def delete(db: Session, model_id: UUID4):
     return update_delete(db, Quote, model_id, model_name)
+
+
+def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):
+    employee = get_employee_id_by_token(db, authorize)
+    price_lists = db.query(PriceList).filter(PriceList.service_type_id == request.service_type_id)
+    if price_lists.count() == 0:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='No existe lista de precio para el tipo de servicio seleccionado.')
+
+    price_list_with_higher_hierarchy: PriceList = None
+    for price_list in price_lists.all():
+        if price_list_with_higher_hierarchy is None:
+            price_list_with_higher_hierarchy = price_list
+        elif price_list.hierarchy > price_list_with_higher_hierarchy.hierarchy:
+            price_list_with_higher_hierarchy = price_list
+
+    subtotal = 0
+    tax = 0
+    discount = 0
+    extras = 0
+    total = 0
+
+    subtotal = float(price_list_with_higher_hierarchy.cost) * request.quantity
+
+    if subtotal < price_list_with_higher_hierarchy.min_cost:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f'El costo no puede ser menor a {price_list_with_higher_hierarchy.min_cost}.')
+
+    if request.extras_quote:
+        if request.extras_quote.count() > 0:
+            for extra_quote in request.extras_quote:
+                extra = db.query(Extra).filter(Extra.id == extra_quote.extra_id).first()
+                extras = extras + (extra.quantity * extra_quote.quantity)
+
+
+    if request.discount_id:
+        if request.discount_id is not None:
+            discount_db = db.query(Discount).filter(Discount.id == request.discount_id).first()
+            discount_db = discount_db.percentage / 100
+            discount = subtotal * discount_db
+
+
+    if request.is_tax:
+        tax_main = db.query(Tax).filter(Tax.is_main == True).filter(Tax.job_center_id == employee.job_center_id).first()
+        if not tax_main:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Debes configurar un impuesto principal en el catalogo de impuestos.')
+        tax_main = tax_main.value / 100
+        tax = ((subtotal + extras) - discount) * tax_main
+
+    total = (subtotal + tax + extras) - discount
+
+    return QuoterResponse(
+        price_list=price_list_with_higher_hierarchy.id,
+        subtotal=subtotal,
+        extras=extras,
+        discount=discount,
+        tax=tax,
+        total=total
+    )
