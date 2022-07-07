@@ -30,10 +30,22 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
     employee = get_employee_id_by_token(db, authorize)
     get_data(db, ServiceType, request.service_type_id, 'tipo de servicio')
     get_data(db, Customer, request.customer_id, 'cliente')
-    get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
-    get_data(db, Discount, request.discount_id, 'descuento')
     get_data(db, Employee, request.employee_id, 'empleado')
-    get_data(db, PriceList, request.price_list_id, 'lista de precio')
+
+    origin_source_id = None
+    discount_id = None
+    price_list_id = None
+
+    if request.origin_source_id is not None:
+        get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
+        origin_source_id = request.origin_source_id
+    if request.discount_id is not None:
+        get_data(db, Discount, request.discount_id, 'descuento')
+        discount_id = request.discount_id
+    if request.price_list_id is not None:
+        get_data(db, PriceList, request.price_list_id, 'lista de precio')
+        price_list_id = request.price_list_id
+
     folio = folios.quote(db, employee.job_center_id)
     request_data = Quote(
         folio=folio,
@@ -46,10 +58,10 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
         approved=request.approved,
         service_type_id=request.service_type_id,
         customer_id=request.customer_id,
-        origin_source_id=request.origin_source_id,
-        discount_id=request.discount_id,
+        origin_source_id=origin_source_id,
+        discount_id=discount_id,
         employee_id=request.employee_id,
-        price_list_id=request.price_list_id,
+        price_list_id=price_list_id,
         status_id=get_status_id(),
         job_center_id=employee.job_center_id
     )
@@ -60,11 +72,16 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
 def update(db: Session, request: QuoteUpdateRequest, model_id: UUID4):
     get_data(db, ServiceType, request.service_type_id, 'tipo de servicio')
     get_data(db, Customer, request.customer_id, 'cliente')
-    get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
-    get_data(db, Discount, request.discount_id, 'descuento')
     get_data(db, Employee, request.employee_id, 'empleado')
-    get_data(db, PriceList, request.price_list_id, 'lista de precio')
     get_data(db, JobCenter, request.job_center_id, 'centro de trabajo')
+
+    if request.origin_source_id is not None:
+        get_data(db, OriginSource, request.origin_source_id, 'fuente de origen')
+    if request.discount_id is not None:
+        get_data(db, Discount, request.discount_id, 'descuento')
+    if request.price_list_id is not None:
+        get_data(db, PriceList, request.price_list_id, 'lista de precio')
+
     return update_data(db, Quote, model_id, model_name, request.dict())
 
 

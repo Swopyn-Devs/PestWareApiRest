@@ -21,10 +21,10 @@ class QuoteRequest(BaseModel):
     approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
     service_type_id: UUID4 = Field(title=title_service_type_id, description=desc_service_type_id, example=ex_service_type_id)
     customer_id: UUID4 = Field(title=title_customer_id, description=desc_customer_id, example=ex_customer_id)
-    origin_source_id: Optional[UUID4] = Field(title=title_origin_source_id, description=desc_origin_source_id, example=ex_origin_source_id)
-    discount_id: Optional[UUID4] = Field(title=title_discount_id, description=desc_discount_id, example=ex_discount_id)
+    origin_source_id: Optional[UUID4] = None
+    discount_id: Optional[UUID4] = None
     employee_id: UUID4 = Field(title=title_employee_id, description=desc_employee_id, example=ex_employee_id)
-    price_list_id: Optional[UUID4] = Field(title=title_price_list_id, description=desc_price_list_id, example=ex_price_list_id)
+    price_list_id: Optional[UUID4] = None
 
     class Config:
         orm_mode = True
@@ -40,10 +40,10 @@ class QuoteUpdateRequest(BaseModel):
     approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
     service_type_id: UUID4 = Field(title=title_service_type_id, description=desc_service_type_id, example=ex_service_type_id)
     customer_id: UUID4 = Field(title=title_customer_id, description=desc_customer_id, example=ex_customer_id)
-    origin_source_id: Optional[UUID4] = Field(title=title_origin_source_id, description=desc_origin_source_id, example=ex_origin_source_id)
-    discount_id: Optional[UUID4] = Field(title=title_discount_id, description=desc_discount_id, example=ex_discount_id)
+    origin_source_id: Optional[UUID4] = None
+    discount_id: Optional[UUID4] = None
     employee_id: UUID4 = Field(title=title_employee_id, description=desc_employee_id, example=ex_employee_id)
-    price_list_id: Optional[UUID4] = Field(title=title_price_list_id, description=desc_price_list_id, example=ex_price_list_id)
+    price_list_id: Optional[UUID4] = None
     job_center_id: UUID4 = Field(title=title_job_center_id, description=desc_job_center_id, example=ex_job_center_id)
 
     class Config:
@@ -61,12 +61,14 @@ class QuoteResponse(BaseModel):
     approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
     service_type_id: ServiceTypeResponse
     customer_id: CustomerResponse
-    origin_source_id: Optional[OriginSourceResponse]
-    discount_id: Optional[DiscountResponse]
+    origin_source_id: Optional[OriginSourceResponse] = None
+    discount_id: Optional[DiscountResponse] = None
     employee_id: EmployeeResponse
-    price_list_id: Optional[PriceListResponse]
+    price_list_id: Optional[PriceListResponse] = None
     status_id: StatusResponse
     job_center_id: JobCenterResponse
+    created_at: str
+    updated_at: str
 
     class Config:
         orm_mode = True
