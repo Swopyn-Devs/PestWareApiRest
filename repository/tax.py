@@ -23,6 +23,7 @@ def create(db: Session, request: TaxRequest, authorize: AuthJWT):
     request_data = Tax(
         name=request.name,
         value=request.value,
+        is_main=request.is_main,
         job_center_id=employee.job_center_id
     )
     last_id = insert_data(db, request_data)

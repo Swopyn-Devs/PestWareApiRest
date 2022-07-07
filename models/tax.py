@@ -1,3 +1,4 @@
+from email.policy import default
 from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -10,6 +11,7 @@ class Tax(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, server_default=DefaultClause(text('gen_random_uuid()')))
     name = Column(String, nullable=False)
     value = Column(SmallInteger, nullable=False)
+    is_main = Column(Boolean, default=False)
     job_center_id = Column(UUID(as_uuid=True), nullable=False)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())

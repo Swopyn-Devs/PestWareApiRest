@@ -11,6 +11,7 @@ from repository import quote_plague
 from repository import quote_concept
 from repository import quote_extra
 from schemas.quote import QuoteRequest, QuoteUpdateRequest, QuoteResponse
+from schemas.quoter import QuoterRequest, QuoterResponse
 from schemas.quote_plague import QuotePlagueRequest, QuotePlagueResponse
 from schemas.quote_concept import QuoteConceptRequest, QuoteConceptResponse
 from schemas.quote_extra import QuoteExtraRequest, QuoteExtraResponse
@@ -139,3 +140,9 @@ async def destroy_concept(quote_concept_id: UUID4, db: Session = Depends(get_db)
 async def destroy_extra(quote_extra_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return quote_extra.delete(db, quote_extra_id)
+
+
+@router.post('/quoter', status_code=status.HTTP_200_OK, response_model=QuoterResponse)
+async def quoter(request: QuoterRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote.quoter(db, authorize, request)
