@@ -6,10 +6,14 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_mail import FastMail, MessageSchema
 from sqlalchemy.orm import Session
 
+from models.job_center import JobCenter
 from models.customer import Customer
 from models.customer_portal_account import CustomerPortalAccount
+from schemas.auth import LoginResponse
+from schemas.auth_customer import LoginRequest
 from schemas.customer_portal_account import CustomerPortalAccountRequest, CustomerPortalAccountRequestUpdated, SendCredentialsRequest, SendCredentialsResponse
 from services import mail
+from utils.jwt import expires
 from utils.hashing import Hash
 
 
@@ -146,3 +150,28 @@ def send_credentials(db: Session, portal_account_id: UUID4, request: SendCredent
     background_tasks.add_task(fm.send_message, message, template_name='mail_welcome_portal.html')
 
     return SendCredentialsResponse(detail='Se ha enviado las credenciales de acceso a la cuenta de correo del cliente.')
+
+
+def login(db: Session, request: LoginRequest, authorize: AuthJWT):
+    job_center = db.query(JobCenter).filter(JobCenter.slug == request.job_center_slug).first()
+    if not job_center:
+       raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='La url de esta página es incorrecta.')
+
+    user = db.query(CustomerPortalAccount).\
+            join(Customer, CustomerPortalAccount.customer_id == Customer.id).\
+            filter(Customer.job_center_id == job_center.id).filter(CustomerPortalAccount.is_deleted == False).\
+            filter(CustomerPortalAccount.username == request.username).first()
+
+    if not user:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='No se encontraron estas credenciales.')
+
+    if not Hash.verify(request.password, user.password):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Contraseña invalida.')
+
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail='Tu cuenta esta suspendida.')
+
+    access_token = authorize.create_access_token(subject=str(user.id), expires_time=expires)
+    refresh_token = authorize.create_refresh_token(subject=str(user.id), expires_time=expires)
+
+    return LoginResponse(access_token=access_token, refresh_token=refresh_token, type='Bearer')
