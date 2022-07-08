@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 
 from database import get_db
 from repository import customer_portal_account
+from schemas.auth import LoginResponse
+from schemas.auth_customer import LoginRequest
 from schemas.customer_portal_account import CustomerPortalAccountRequest, CustomerPortalAccountRequestUpdated, CustomerPortalAccountResponse, SendCredentialsResponse, SendCredentialsRequest
 
 router = APIRouter(
@@ -49,3 +51,8 @@ async def destroy(portal_account_id: UUID4, db: Session = Depends(get_db), autho
 @router.post('/{portal_account_id}/send_credentials/', response_model=SendCredentialsResponse)
 def send_credentials(portal_account_id: UUID4, background_tasks: BackgroundTasks, request: SendCredentialsRequest, db: Session = Depends(get_db)):
     return customer_portal_account.send_credentials(db, portal_account_id, request, background_tasks)
+
+
+@router.post('/login', response_model=LoginResponse)
+def login(request: LoginRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    return customer_portal_account.login(db, request, authorize)
