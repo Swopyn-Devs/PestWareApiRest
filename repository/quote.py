@@ -15,7 +15,7 @@ from models.discount import Discount
 from models.employee import Employee
 from models.price_list import PriceList
 from models.job_center import JobCenter
-from schemas.quote import QuoteRequest, QuoteUpdateRequest
+from schemas.quote import QuoteApproveRequest, QuoteRequest, QuoteUpdateRequest
 from schemas.quoter import QuoterRequest, QuoterResponse
 
 model_name = 'cotización'
@@ -92,11 +92,22 @@ def delete(db: Session, model_id: UUID4):
     return update_delete(db, Quote, model_id, model_name)
 
 
+def approve(db: Session, request: QuoteApproveRequest, model_id: UUID4):
+    return update_data(db, Quote, model_id, model_name, request.dict())
+
+
 def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):
     employee = get_employee_id_by_token(db, authorize)
     price_lists = db.query(PriceList).filter(PriceList.service_type_id == request.service_type_id)
     if price_lists.count() == 0:
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='No existe lista de precio para el tipo de servicio seleccionado.')
+        return QuoterResponse(
+            price_list=None,
+            subtotal=0,
+            extras=0,
+            discount=0,
+            tax=0,
+            total=0
+        )
 
     price_list_with_higher_hierarchy: PriceList = None
     for price_list in price_lists.all():
@@ -117,7 +128,7 @@ def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=f'El costo no puede ser menor a {price_list_with_higher_hierarchy.min_cost}.')
 
     if request.extras_quote:
-        if request.extras_quote.count() > 0:
+        if len(request.extras_quote) > 0:
             for extra_quote in request.extras_quote:
                 extra = db.query(Extra).filter(Extra.id == extra_quote.extra_id).first()
                 extras = extras + (extra.quantity * extra_quote.quantity)

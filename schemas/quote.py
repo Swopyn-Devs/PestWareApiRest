@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, UUID4, Field
 from typing import Optional
 from documentation.quotes import *
@@ -50,6 +51,13 @@ class QuoteUpdateRequest(BaseModel):
         orm_mode = True
 
 
+class QuoteApproveRequest(BaseModel):
+    approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
+
+    class Config:
+        orm_mode = True
+
+
 class QuoteResponse(BaseModel):
     id: UUID4
     folio: str = Field(title=title_folio, description=desc_total, example=ex_total)
@@ -67,8 +75,8 @@ class QuoteResponse(BaseModel):
     price_list_id: Optional[PriceListResponse] = None
     status_id: StatusResponse
     job_center_id: JobCenterResponse
-    created_at: str
-    updated_at: str
+    created_at: datetime
+    updated_at: datetime
 
     class Config:
         orm_mode = True
