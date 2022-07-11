@@ -10,11 +10,13 @@ from repository import quote
 from repository import quote_plague
 from repository import quote_concept
 from repository import quote_extra
+from repository import quote_tracing
 from schemas.quote import QuoteApproveRequest, QuoteRejectRequest, QuoteRequest, QuoteUpdateRequest, QuoteResponse
 from schemas.quoter import QuoterRequest, QuoterResponse
 from schemas.quote_plague import QuotePlagueRequest, QuotePlagueResponse
 from schemas.quote_concept import QuoteConceptRequest, QuoteConceptResponse
 from schemas.quote_extra import QuoteExtraRequest, QuoteExtraResponse
+from schemas.quote_tracing import QuoteTracingRequest, QuoteTracingResponse
 
 router = APIRouter(
     prefix='/quotes',
@@ -46,6 +48,12 @@ async def index_extra(quote_id: UUID4, paginate: Optional[bool] = Query(None), d
     return quote_extra.get_all(db, authorize, paginate, quote_id)
 
 
+@router.get('/{quote_id}/tracing', status_code=status.HTTP_200_OK, response_model=Page[QuoteTracingResponse])
+async def index_tracing(quote_id: UUID4, paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote_tracing.get_all(db, authorize, paginate, quote_id)
+
+
 @router.get('/{quote_id}', status_code=status.HTTP_200_OK, response_model=QuoteResponse)
 async def show(quote_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
@@ -70,6 +78,12 @@ async def show_extra(quote_extra_id: UUID4, db: Session = Depends(get_db), autho
     return quote_extra.retrieve(db, quote_extra_id)
 
 
+@router.get('/tracing/{quote_tracing_id}', status_code=status.HTTP_200_OK, response_model=QuoteTracingResponse)
+async def show_tracing(quote_tracing_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote_tracing.retrieve(db, quote_tracing_id)
+
+
 @router.post('', status_code=status.HTTP_201_CREATED, response_model=QuoteResponse)
 async def store(request: QuoteRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
@@ -92,6 +106,12 @@ async def store_concept(quote_id: UUID4, request: QuoteConceptRequest, db: Sessi
 async def store_extra(quote_id: UUID4, request: QuoteExtraRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return quote_extra.create(db, request, quote_id)
+
+
+@router.post('/{quote_id}/tracing', status_code=status.HTTP_201_CREATED, response_model=QuoteTracingResponse)
+async def store_tracing(quote_id: UUID4, request: QuoteTracingRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote_tracing.create(db, request, quote_id)
 
 
 @router.put('/{quote_id}', status_code=status.HTTP_202_ACCEPTED, response_model=QuoteResponse)
@@ -130,6 +150,12 @@ async def update_extra(quote_extra_id: UUID4, request: QuoteExtraRequest, db: Se
     return quote_extra.update(db, request, quote_extra_id)
 
 
+@router.put('/tracing/{quote_tracing_id}', status_code=status.HTTP_202_ACCEPTED, response_model=QuoteTracingResponse)
+async def update_tracing(quote_tracing_id: UUID4, request: QuoteTracingRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote_tracing.update(db, request, quote_tracing_id)
+
+
 @router.delete('/{quote_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def destroy(quote_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
@@ -152,6 +178,12 @@ async def destroy_concept(quote_concept_id: UUID4, db: Session = Depends(get_db)
 async def destroy_extra(quote_extra_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return quote_extra.delete(db, quote_extra_id)
+
+
+@router.delete('/tracing/{quote_tracing_id}', status_code=status.HTTP_204_NO_CONTENT)
+async def destroy_tracing(quote_tracing_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote_tracing.delete(db, quote_tracing_id)
 
 
 @router.post('/quoter', status_code=status.HTTP_200_OK, response_model=QuoterResponse)
