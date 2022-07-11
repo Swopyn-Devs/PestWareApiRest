@@ -15,7 +15,8 @@ from models.discount import Discount
 from models.employee import Employee
 from models.price_list import PriceList
 from models.job_center import JobCenter
-from schemas.quote import QuoteApproveRequest, QuoteRequest, QuoteUpdateRequest
+from models.rejection_reason import RejectionReason
+from schemas.quote import QuoteApproveRequest, QuoteRejectRequest, QuoteRequest, QuoteUpdateRequest
 from schemas.quoter import QuoterRequest, QuoterResponse
 
 model_name = 'cotización'
@@ -93,6 +94,11 @@ def delete(db: Session, model_id: UUID4):
 
 
 def approve(db: Session, request: QuoteApproveRequest, model_id: UUID4):
+    return update_data(db, Quote, model_id, model_name, request.dict())
+
+
+def reject(db: Session, request: QuoteRejectRequest, model_id: UUID4):
+    get_data(db, RejectionReason, request.rejection_reason_id, 'motivo de rechazo')
     return update_data(db, Quote, model_id, model_name, request.dict())
 
 

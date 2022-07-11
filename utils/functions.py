@@ -25,6 +25,8 @@ from models.quote import Quote
 from models.quote_plague import QuotePlague
 from models.quote_concept import QuoteConcept
 from models.quote_extra import QuoteExtra
+from models.rejection_reason import RejectionReason
+from models.cancellation_reason import CancellationReason
 
 from repository import customer
 
@@ -263,6 +265,10 @@ def get_model(field_name_id):
         return [Discount, 'descuento']
     elif field_name_id == 'extra_id':
         return [Extra, 'extra']
+    elif field_name_id == 'rejection_reason_id':
+        return [RejectionReason, 'motivo de rechazo']
+    elif field_name_id == 'cancellation_reason_id':
+        return [CancellationReason, 'motivo de cancelación']
 
     return False
 
@@ -312,5 +318,9 @@ def update_field(data, field_name_id, data_model):
         data.plague_id = data_model
     elif field_name_id == 'plague_category_id':
         data.plague_category_id = data_model
+    elif field_name_id == 'rejection_reason_id':
+        data.rejection_reason_id = data_model
+    elif field_name_id == 'cancellation_reason_id':
+        data.cancellation_reason_id = data_model
 
     return data
