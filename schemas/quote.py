@@ -10,6 +10,7 @@ from schemas.customer import CustomerResponse
 from schemas.service_type import ServiceTypeResponse
 from schemas.price_list import PriceListResponse
 from schemas.status import StatusResponse
+from schemas.rejection_reason import RejectionReasonResponse
 
 
 class QuoteRequest(BaseModel):
@@ -58,6 +59,14 @@ class QuoteApproveRequest(BaseModel):
         orm_mode = True
 
 
+class QuoteRejectRequest(BaseModel):
+    rejection_reason_id: UUID4 = Field(title=title_rejection_reason_id, description=desc_rejection_reason_id, example=ex_rejection_reason_id)
+    rejection_reason_comment: str = Field(title=title_rejection_reason_comment, description=desc_rejection_reason_comment, example=ex_rejection_reason_comment)
+
+    class Config:
+        orm_mode = True
+
+
 class QuoteResponse(BaseModel):
     id: UUID4
     folio: str = Field(title=title_folio, description=desc_total, example=ex_total)
@@ -75,6 +84,8 @@ class QuoteResponse(BaseModel):
     price_list_id: Optional[PriceListResponse] = None
     status_id: StatusResponse
     job_center_id: JobCenterResponse
+    rejection_reason_id: Optional[RejectionReasonResponse] = None
+    rejection_reason_comment: Optional[str] = None
     created_at: datetime
     updated_at: datetime
 

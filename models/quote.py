@@ -24,6 +24,8 @@ class Quote(Base):
     employee_id = Column(UUID(as_uuid=True), nullable=False)
     price_list_id = Column(UUID(as_uuid=True), nullable=True)
     status_id = Column(UUID(as_uuid=True), nullable=False, default=uuid.UUID('8ba451f8-b352-4ff6-b573-532b36c7172b'))
+    rejection_reason_id = Column(UUID(as_uuid=True), nullable=True)
+    rejection_reason_comment = Column(String, nullable=True)
     job_center_id = Column(UUID(as_uuid=True), nullable=False)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())

@@ -10,7 +10,7 @@ from repository import quote
 from repository import quote_plague
 from repository import quote_concept
 from repository import quote_extra
-from schemas.quote import QuoteApproveRequest, QuoteRequest, QuoteUpdateRequest, QuoteResponse
+from schemas.quote import QuoteApproveRequest, QuoteRejectRequest, QuoteRequest, QuoteUpdateRequest, QuoteResponse
 from schemas.quoter import QuoterRequest, QuoterResponse
 from schemas.quote_plague import QuotePlagueRequest, QuotePlagueResponse
 from schemas.quote_concept import QuoteConceptRequest, QuoteConceptResponse
@@ -104,6 +104,12 @@ async def update(quote_id: UUID4, request: QuoteUpdateRequest, db: Session = Dep
 async def approve(quote_id: UUID4, request: QuoteApproveRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return quote.approve(db, request, quote_id)
+
+
+@router.patch('/{quote_id}/reject', status_code=status.HTTP_202_ACCEPTED, response_model=QuoteResponse)
+async def reject(quote_id: UUID4, request: QuoteRejectRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote.reject(db, request, quote_id)
 
 
 @router.put('/plagues/{quote_plague_id}', status_code=status.HTTP_202_ACCEPTED, response_model=QuotePlagueResponse)
