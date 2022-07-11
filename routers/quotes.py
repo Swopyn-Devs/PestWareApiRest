@@ -132,6 +132,11 @@ async def reject(quote_id: UUID4, request: QuoteRejectRequest, db: Session = Dep
     return quote.reject(db, request, quote_id)
 
 
+@router.get('/{quote_id}/pdf', status_code=status.HTTP_202_ACCEPTED)
+async def download(quote_id: UUID4, db: Session = Depends(get_db)):
+    return quote.download_pdf(db, quote_id)
+
+
 @router.put('/plagues/{quote_plague_id}', status_code=status.HTTP_202_ACCEPTED, response_model=QuotePlagueResponse)
 async def update_plague(quote_plague_id: UUID4, request: QuotePlagueRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()

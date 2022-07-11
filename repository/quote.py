@@ -1,6 +1,6 @@
 from models.tax import Tax
 from utils.functions import *
-from utils import folios
+from utils import folios, pdf
 
 from pydantic import UUID4
 from sqlalchemy.orm import Session
@@ -100,6 +100,14 @@ def approve(db: Session, request: QuoteApproveRequest, model_id: UUID4):
 def reject(db: Session, request: QuoteRejectRequest, model_id: UUID4):
     get_data(db, RejectionReason, request.rejection_reason_id, 'motivo de rechazo')
     return update_data(db, Quote, model_id, model_name, request.dict())
+
+
+def download_pdf(db: Session, model_id: UUID4):
+    quote: Quote = db.query(Quote).filter(Quote.id == model_id).first()
+
+    template = 'templates/pdfs/quote/template.html'
+    css = 'templates/pdfs/quote/template.css'
+    return pdf.create_pdf(template, quote.__dict__, css, quote.folio)
 
 
 def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):

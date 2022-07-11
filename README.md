@@ -78,6 +78,8 @@ la comunicación de tu aplicación.
    ```shell
    > sudo apt-get install libpq-dev python3-dev (en ubuntu o para servers)
 
+   > sudo apt-get install wkhtmltopdf (en ubuntu o para pdfkit)
+
    > pip install -r requirements.txt
    
    > alembic revision --autogenerate -m "Initial"
