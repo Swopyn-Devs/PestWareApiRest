@@ -1,0 +1,17 @@
+title_id = 'ID'
+title_quote_id = 'ID de la cotización'
+title_date = 'Fecha del seguimiento'
+title_time = 'Hora del seguimiento'
+title_comment = 'Comentario del seguimiento'
+
+desc_id = 'ID del objeto.'
+desc_quote_id = 'ID del objeto de la cotización.'
+desc_date = 'La fecha del seguimiento.'
+desc_time = 'La hora del seguimiento.'
+desc_comment = 'El comentario del seguimiento.'
+
+ex_id = '913580c5-bfa7-4fb3-9ed2-3f7f9937322c'
+ex_quote_id = 'b26a7e73-e2c5-45a0-9f4e-f402c5bb1318'
+ex_date = '2022-01-01'
+ex_time = '12:00:00'
+ex_comment = 'Comentario'
