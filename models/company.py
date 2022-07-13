@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class Company(Base):
@@ -24,3 +25,10 @@ class Company(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class CompanyAdmin(ModelAdmin, model=Company):
+    column_searchable_list = [Company.name, Company.folio, Company.slug]
+    column_sortable_list = [Company.created_at]
+    column_list = [Company.id, Company.folio, Company.name, Company.contact_name, Company.cutoff_date, Company.is_deleted, Company.created_at, Company.updated_at]
+    form_columns = [Company.folio, Company.name, Company.slug, Company.contact_name, Company.contact_email, Company.contact_phone, Company.country_id, Company.cutoff_date, Company.is_active, Company.is_deleted]

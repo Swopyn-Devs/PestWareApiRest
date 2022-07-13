@@ -10,12 +10,65 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from fastapi_pagination import add_pagination
 
+from sqladmin import Admin
+
 from documentation.general import *
 from schemas.auth import Settings
 from utils.config import *
 import routers
 
+from database import engine
+import models
+
 app = FastAPI()
+admin = Admin(
+    app, 
+    engine,
+    base_url='/joxNjU3Nzc5ODk',
+    logo_url='https://pwa-backend.s3.us-west-1.amazonaws.com/pestware-header-gray.png',
+    title='Admin | Pestware REST'
+)
+
+
+admin.register_model(models.UserAdmin)
+admin.register_model(models.EmployeeAdmin)
+admin.register_model(models.CompanyAdmin)
+admin.register_model(models.JobCenterAdmin)
+admin.register_model(models.CustomerAdmin)
+admin.register_model(models.CustomerPortalAccountAdmin)
+admin.register_model(models.QuoteAdmin)
+admin.register_model(models.QuotePlagueAdmin)
+admin.register_model(models.QuoteConceptAdmin)
+admin.register_model(models.QuoteExtraAdmin)
+admin.register_model(models.QuoteTracingAdmin)
+admin.register_model(models.RejectionReasonAdmin)
+admin.register_model(models.CustomDescriptionAdmin)
+admin.register_model(models.PriceListAdmin)
+admin.register_model(models.PriceListPlagueAdmin)
+admin.register_model(models.CountryAdmin)
+admin.register_model(models.ApplicationMethodAdmin)
+admin.register_model(models.BusinessActivityAdmin)
+admin.register_model(models.CancellationReasonAdmin)
+admin.register_model(models.CleaningAdmin)
+admin.register_model(models.ConceptAdmin)
+admin.register_model(models.DiscountAdmin)
+admin.register_model(models.ExtraAdmin)
+admin.register_model(models.IndicationAdmin)
+admin.register_model(models.InfestationDegreeAdmin)
+admin.register_model(models.JobTitleAdmin)
+admin.register_model(models.OriginSourceAdmin)
+admin.register_model(models.PaymentMethodAdmin)
+admin.register_model(models.PaymentWayAdmin)
+admin.register_model(models.PlagueCategoryAdmin)
+admin.register_model(models.PlagueAdmin)
+admin.register_model(models.PresentationAdmin)
+admin.register_model(models.VoucherAdmin)
+admin.register_model(models.StatusAdmin)
+admin.register_model(models.TaxAdmin)
+admin.register_model(models.TypeAdmin)
+admin.register_model(models.ServiceTypeAdmin)
+admin.register_model(models.SupplierAdmin)
+admin.register_model(models.UnitAdmin)
 
 
 @AuthJWT.load_config

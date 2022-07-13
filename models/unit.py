@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class Unit(Base):
@@ -13,3 +14,10 @@ class Unit(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class UnitAdmin(ModelAdmin, model=Unit):
+    column_searchable_list = [Unit.name]
+    column_sortable_list = [Unit.created_at]
+    column_list = [Unit.id, Unit.name, Unit.job_center_id, Unit.is_deleted, Unit.created_at, Unit.updated_at]
+    form_columns = [Unit.name, Unit.job_center_id, Unit.is_deleted]

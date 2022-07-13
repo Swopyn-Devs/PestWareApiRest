@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class QuoteConcept(Base):
@@ -18,3 +19,10 @@ class QuoteConcept(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class QuoteConceptAdmin(ModelAdmin, model=QuoteConcept):
+    column_searchable_list = [QuoteConcept.concept]
+    column_sortable_list = [QuoteConcept.created_at]
+    column_list = [QuoteConcept.id, QuoteConcept.quote_id, QuoteConcept.concept, QuoteConcept.quantity, QuoteConcept.unit_price, QuoteConcept.subtotal, QuoteConcept.tax, QuoteConcept.total, QuoteConcept.is_deleted, QuoteConcept.created_at, QuoteConcept.updated_at]
+    form_columns = [QuoteConcept.quote_id, QuoteConcept.concept, QuoteConcept.quantity, QuoteConcept.unit_price, QuoteConcept.subtotal, QuoteConcept.tax, QuoteConcept.total, QuoteConcept.is_deleted]

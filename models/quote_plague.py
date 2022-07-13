@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class QuotePlague(Base):
@@ -13,3 +14,9 @@ class QuotePlague(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class QuotePlagueAdmin(ModelAdmin, model=QuotePlague):
+    column_sortable_list = [QuotePlague.created_at]
+    column_list = [QuotePlague.id, QuotePlague.quote_id, QuotePlague.plague_id, QuotePlague.is_deleted, QuotePlague.created_at, QuotePlague.updated_at]
+    form_columns = [QuotePlague.quote_id, QuotePlague.plague_id, QuotePlague.is_deleted]
