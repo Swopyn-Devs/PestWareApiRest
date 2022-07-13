@@ -55,6 +55,8 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
         folio=folio,
         quantity=request.quantity,
         subtotal=request.subtotal,
+        discount=request.discount,
+        extra=request.extra,
         total=request.total,
         tax=request.tax,
         sent_mail=request.sent_mail,

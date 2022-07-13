@@ -2,6 +2,7 @@ from sqlalchemy import *
 from sqlalchemy.dialects.postgresql import UUID
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class JobCenter(Base):
@@ -27,3 +28,10 @@ class JobCenter(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class JobCenterAdmin(ModelAdmin, model=JobCenter):
+    column_searchable_list = [JobCenter.name, JobCenter.slug, JobCenter.health_manager, JobCenter.email, JobCenter.phone, JobCenter.license_number]
+    column_sortable_list = [JobCenter.created_at]
+    column_list = [JobCenter.id, JobCenter.name, JobCenter.business_name, JobCenter.company_id, JobCenter.license_number, JobCenter.is_active, JobCenter.is_deleted, JobCenter.created_at, JobCenter.updated_at]
+    form_columns = [JobCenter.name, JobCenter.slug, JobCenter.business_name, JobCenter.health_manager, JobCenter.company_id, JobCenter.taxpayer_registration, JobCenter.license_number, JobCenter.email, JobCenter.phone, JobCenter.whatsapp, JobCenter.web_page, JobCenter.facebook, JobCenter.messenger, JobCenter.timezone, JobCenter.is_active, JobCenter.is_deleted]

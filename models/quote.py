@@ -3,6 +3,7 @@ from sqlalchemy.dialects.postgresql import UUID
 import uuid
 
 from database import Base
+from sqladmin import ModelAdmin
 
 
 class Quote(Base):
@@ -32,3 +33,10 @@ class Quote(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class QuoteAdmin(ModelAdmin, model=Quote):
+    column_searchable_list = [Quote.folio]
+    column_sortable_list = [Quote.created_at]
+    column_list = [Quote.id, Quote.folio, Quote.subtotal, Quote.total, Quote.sent_mail, Quote.sent_whatsapp, Quote.approved, Quote.service_type_id, Quote.customer_id, Quote.employee_id, Quote.status_id, Quote.job_center_id, Quote.is_deleted, Quote.created_at, Quote.updated_at]
+    form_columns = [Quote.folio, Quote.quantity, Quote.subtotal, Quote.total, Quote.tax, Quote.sent_mail, Quote.sent_whatsapp, Quote.approved, Quote.service_type_id, Quote.customer_id, Quote.origin_source_id, Quote.discount_id, Quote.employee_id, Quote.price_list_id, Quote.status_id, Quote.rejection_reason_id, Quote.rejection_reason_comment, Quote.job_center_id, Quote.is_deleted]
