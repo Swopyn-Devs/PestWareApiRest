@@ -1,6 +1,7 @@
+from typing import Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.concepts import *
-from schemas.job_center import JobCenterResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
 
 
 class ConceptRequest(BaseModel):
@@ -24,7 +25,7 @@ class ConceptResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
     type: str = Field(title=title_type, description=desc_type, max_length=255, min_length=3, example=ex_type)
-    job_center_id: JobCenterResponse
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
 
     class Config:
         orm_mode = True

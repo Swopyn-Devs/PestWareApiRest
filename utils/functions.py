@@ -53,7 +53,7 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
         for field in data2:
             model2 = get_model(field)
             if model2 != False:
-                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                data_model = get_data(db, model2[0], data2[field], model2[1], False, False, True, True, 1)
                 if field == 'customer_id':
                         data_model = customer.response_customer(db, data_model)
                 data_main[aux] = update_field(data_main[aux], field, data_model)
@@ -106,7 +106,7 @@ def update_delete(db, model, model_id, model_name, filters=False):
     return {'detail': delete_message(model_name)}
 
 
-def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False, is_deleted=True, foreign=True):
+def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False, is_deleted=True, foreign=True, primary_field=0):
     if model_id is None or model_id == 'None':
         return None
 
@@ -136,14 +136,21 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
 
     # set data model to foreign field
     if foreign:
+        if primary_field > 1:
+            return model_id
+        primary_field += 1
+
         for record in data:
             data2 = object_as_dict(record)
             for field in data2:
                 model2 = get_model(field)
                 if model2 != False:
-                    data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False)
+                    data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False, True, primary_field)
                     if field == 'customer_id':
-                        data_model = customer.response_customer(db, data_model)
+                        primary = True
+                        if primary_field > 1:
+                            primary = False
+                        data_model = customer.response_customer(db, data_model, True, primary)
                     data2[field] = data_model
         return data2
     return data
@@ -322,5 +329,7 @@ def update_field(data, field_name_id, data_model):
         data.rejection_reason_id = data_model
     elif field_name_id == 'cancellation_reason_id':
         data.cancellation_reason_id = data_model
+    elif field_name_id == 'extra_id':
+        data.extra_id = data_model
 
     return data
