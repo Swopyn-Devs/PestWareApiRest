@@ -1,7 +1,7 @@
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.quote_concepts import *
-from schemas.quote import QuoteResponse
+from schemas.quote import QuoteResponse, QuoteBasicResponse
 
 
 class QuoteConceptRequest(BaseModel):
@@ -18,7 +18,7 @@ class QuoteConceptRequest(BaseModel):
 
 class QuoteConceptResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
-    quote_id: QuoteResponse
+    quote_id: Union[QuoteResponse, QuoteBasicResponse]
     concept: str = Field(title=title_concept, description=desc_concept, example=ex_concept)
     quantity: Optional[int] = Field(title=title_quantity, description=desc_quantity, example=ex_quantity)
     unit_price: Optional[float] = Field(title=title_unit_price, description=desc_unit_price, example=ex_unit_price)

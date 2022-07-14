@@ -1,6 +1,7 @@
+from typing import Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.suppliers import *
-from schemas.job_center import JobCenterResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
 
 
 class SupplierRequest(BaseModel):
@@ -45,7 +46,7 @@ class SupplierResponse(BaseModel):
     account_holder: str = Field(title=title_account_holder, description=desc_account_holder, example=ex_account_holder, max_length=255, min_length=3)
     account_number: str = Field(title=title_account_number, description=desc_account_number, example=ex_account_number, max_length=255, min_length=3)
     taxpayer_registration: str = Field(title=title_taxpayer_registration, description=desc_taxpayer_registration, example=ex_taxpayer_registration, max_length=255, min_length=10)
-    job_center_id: JobCenterResponse
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
 
     class Config:
         orm_mode = True

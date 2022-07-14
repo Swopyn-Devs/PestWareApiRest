@@ -1,7 +1,8 @@
+from typing import Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.quote_plagues import *
-from schemas.quote import QuoteResponse
-from schemas.plague import PlagueResponse
+from schemas.quote import QuoteResponse, QuoteBasicResponse
+from schemas.plague import PlagueResponse, PlagueBasicResponse
 
 
 class QuotePlagueRequest(BaseModel):
@@ -13,8 +14,8 @@ class QuotePlagueRequest(BaseModel):
 
 class QuotePlagueResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
-    quote_id: QuoteResponse
-    plague_id: PlagueResponse
+    quote_id: Union[QuoteResponse, QuoteBasicResponse]
+    plague_id: Union[PlagueResponse, PlagueBasicResponse]
 
     class Config:
         orm_mode = True

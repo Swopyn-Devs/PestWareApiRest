@@ -1,9 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 from pydantic import BaseModel, UUID4, EmailStr, Field
 from documentation.employees import *
-from schemas.job_center import JobCenterResponse
-from schemas.job_title import JobTitleResponse
-from schemas.company import CompanyResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
+from schemas.job_title import JobTitleResponse, JobTitleBasicResponse
+from schemas.company import CompanyResponse, CompanyBasicResponse
 
 
 class EmployeeRequest(BaseModel):
@@ -21,9 +21,23 @@ class EmployeeRequest(BaseModel):
 class EmployeeResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
-    company_id: CompanyResponse
-    job_center_id: JobCenterResponse
-    job_title_id: JobTitleResponse
+    company_id: Union[CompanyResponse, CompanyBasicResponse]
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
+    job_title_id: Union[JobTitleResponse, JobTitleBasicResponse]
+    avatar: Optional[str] = None
+    signature: Optional[str] = None
+    color: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+
+class EmployeeBasicResponse(BaseModel):
+    id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
+    name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    company_id: UUID4
+    job_center_id: UUID4
+    job_title_id: UUID4
     avatar: Optional[str] = None
     signature: Optional[str] = None
     color: Optional[str] = None

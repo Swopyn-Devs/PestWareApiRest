@@ -1,6 +1,7 @@
+from typing import Optional, Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.indications import *
-from schemas.job_center import JobCenterResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
 
 
 class IndicationRequest(BaseModel):
@@ -27,7 +28,18 @@ class IndicationResponse(BaseModel):
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
     key: str = Field(title=title_key, description=desc_key, max_length=20, min_length=2, example=ex_key)
     description: str = Field(title=title_description, description=desc_description, max_length=500, min_length=3, example=ex_description)
-    job_center_id: JobCenterResponse
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
+
+    class Config:
+        orm_mode = True
+
+
+class IndicationBasicResponse(BaseModel):
+    id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
+    name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    key: str = Field(title=title_key, description=desc_key, max_length=20, min_length=2, example=ex_key)
+    description: str = Field(title=title_description, description=desc_description, max_length=500, min_length=3, example=ex_description)
+    job_center_id: UUID4
 
     class Config:
         orm_mode = True

@@ -1,6 +1,7 @@
+from typing import Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.application_methods import *
-from schemas.job_center import JobCenterResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
 
 
 class ApplicationMethodRequest(BaseModel):
@@ -21,7 +22,16 @@ class ApplicationMethodUpdateRequest(BaseModel):
 class ApplicationMethodResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
-    job_center_id: JobCenterResponse
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
+
+    class Config:
+        orm_mode = True
+
+
+class ApplicationMethodBasicResponse(BaseModel):
+    id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
+    name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    job_center_id: UUID4
 
     class Config:
         orm_mode = True

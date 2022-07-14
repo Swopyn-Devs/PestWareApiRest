@@ -1,16 +1,16 @@
 from datetime import datetime
 from pydantic import BaseModel, UUID4, Field
-from typing import Optional
+from typing import Optional, Union
 from documentation.quotes import *
-from schemas.job_center import JobCenterResponse
-from schemas.employee import EmployeeResponse
-from schemas.origin_source import OriginSourceResponse
-from schemas.discount import DiscountResponse
-from schemas.customer import CustomerResponse
-from schemas.service_type import ServiceTypeResponse
-from schemas.price_list import PriceListResponse
+from schemas.job_center import JobCenterResponse, JobCenterBasicResponse
+from schemas.employee import EmployeeResponse, EmployeeBasicResponse
+from schemas.origin_source import OriginSourceResponse, OriginSourceBasicResponse
+from schemas.discount import DiscountResponse, DiscountBasicResponse
+from schemas.customer import CustomerResponse, CustomerBasicResponse
+from schemas.service_type import ServiceTypeResponse, ServiceTypeBasicResponse
+from schemas.price_list import PriceListResponse, PriceListBasicResponse
 from schemas.status import StatusResponse
-from schemas.rejection_reason import RejectionReasonResponse
+from schemas.rejection_reason import RejectionReasonResponse, RejectionReasonBasicResponse
 
 
 class QuoteRequest(BaseModel):
@@ -83,15 +83,44 @@ class QuoteResponse(BaseModel):
     sent_mail: bool = Field(title=title_sent_mail, description=desc_sent_mail, example=ex_sent_mail)
     sent_whatsapp: bool = Field(title=title_sent_whatsapp, description=desc_sent_whatsapp, example=ex_sent_whatsapp)
     approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
-    service_type_id: ServiceTypeResponse
-    customer_id: CustomerResponse
-    origin_source_id: Optional[OriginSourceResponse] = None
-    discount_id: Optional[DiscountResponse] = None
-    employee_id: EmployeeResponse
-    price_list_id: Optional[PriceListResponse] = None
+    service_type_id: Union[ServiceTypeResponse, ServiceTypeBasicResponse]
+    customer_id: Union[CustomerResponse, CustomerBasicResponse]
+    origin_source_id: Optional[Union[OriginSourceResponse, OriginSourceBasicResponse]] = None
+    discount_id: Optional[Union[DiscountResponse, DiscountBasicResponse]] = None
+    employee_id: Union[EmployeeResponse, EmployeeBasicResponse]
+    price_list_id: Optional[Union[PriceListResponse, PriceListBasicResponse]] = None
     status_id: StatusResponse
-    job_center_id: JobCenterResponse
-    rejection_reason_id: Optional[RejectionReasonResponse] = None
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
+    rejection_reason_id: Optional[Union[RejectionReasonResponse, RejectionReasonBasicResponse]] = None
+    rejection_reason_comment: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class QuoteBasicResponse(BaseModel):
+    id: UUID4
+    folio: str = Field(title=title_folio, description=desc_total, example=ex_total)
+    quantity: Optional[int] = Field(title=title_quantity, description=desc_quantity, example=ex_quantity)
+    subtotal: float = Field(title=title_total, description=desc_total, example=ex_total)
+    discount: float = Field(title=title_discount, description=desc_discount, example=ex_discount)
+    extra: float = Field(title=title_extra, description=desc_extra, example=ex_extra)
+    tax: float = Field(title=title_tax, description=desc_tax, example=ex_tax)
+    total: float = Field(title=title_total, description=desc_total, example=ex_total)
+    sent_mail: bool = Field(title=title_sent_mail, description=desc_sent_mail, example=ex_sent_mail)
+    sent_whatsapp: bool = Field(title=title_sent_whatsapp, description=desc_sent_whatsapp, example=ex_sent_whatsapp)
+    approved: bool = Field(title=title_approved, description=desc_approved, example=ex_approved)
+    service_type_id: UUID4
+    customer_id: UUID4
+    origin_source_id: Optional[UUID4] = None
+    discount_id: Optional[UUID4] = None
+    employee_id: UUID4
+    price_list_id: Optional[UUID4] = None
+    status_id: UUID4
+    job_center_id: UUID4
+    rejection_reason_id: Optional[UUID4] = None
     rejection_reason_comment: Optional[str] = None
     created_at: datetime
     updated_at: datetime
