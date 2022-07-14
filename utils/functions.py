@@ -147,7 +147,10 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
                 if model2 != False:
                     data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False, True, primary_field)
                     if field == 'customer_id':
-                        data_model = customer.response_customer(db, data_model)
+                        primary = True
+                        if primary_field > 1:
+                            primary = False
+                        data_model = customer.response_customer(db, data_model, True, primary)
                     data2[field] = data_model
         return data2
     return data
@@ -326,5 +329,7 @@ def update_field(data, field_name_id, data_model):
         data.rejection_reason_id = data_model
     elif field_name_id == 'cancellation_reason_id':
         data.cancellation_reason_id = data_model
+    elif field_name_id == 'extra_id':
+        data.extra_id = data_model
 
     return data
