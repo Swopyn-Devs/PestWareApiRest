@@ -15,6 +15,7 @@ class User(Base):
     is_active = Column(Boolean, default=False)
     employee_id = Column(UUID(as_uuid=True), nullable=True)
     confirmation_code = Column(String, nullable=True)
+    device_token = Column(String, nullable=True)
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())

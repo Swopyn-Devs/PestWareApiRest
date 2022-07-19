@@ -168,6 +168,18 @@ def map_s3_url(employee: Employee):
     return employee
 
 
+def upload_photo_test(photo: UploadFile):
+    validate_image(photo)
+    name = str(uuid.uuid4())
+    key = f'mobile/{name}.jpeg'
+
+    # Upload file to AWS S3
+    if not aws.upload_image(config('AWS_S3_BUCKET_TESTS'), key, photo):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_updated('de la foto de prueba.'))
+
+    return {'detail': 'Foto subida correctamente.', 'data': f"{config('AWS_S3_URL_TESTS')}/{key}"}
+
+
 def validate_image(image):
     allowed_types = ['image/jpeg', 'image/jpg', 'image/png']
     if image.content_type not in allowed_types:

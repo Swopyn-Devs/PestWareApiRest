@@ -71,3 +71,9 @@ async def delete_signature(employee_id: UUID4, db: Session = Depends(get_db), au
 async def destroy(employee_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return employee.delete(db, employee_id)
+
+
+@router.patch('/upload_photo_test', status_code=status.HTTP_202_ACCEPTED)
+async def update_photo_test( file: UploadFile, authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return employee.upload_photo_test(file)

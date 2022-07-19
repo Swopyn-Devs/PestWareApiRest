@@ -236,6 +236,7 @@ def profile(db: Session, authorize: AuthJWT):
         color=employee.color,
         is_verified=user.is_verified,
         is_active=user.is_active,
+        device_token=user.device_token,
         created_at=employee.created_at,
         updated_at=employee.updated_at
     )
@@ -267,6 +268,10 @@ def update(db: Session, request: ProfileRequest, authorize: AuthJWT):
         user.update({'password': Hash.bcrypt(request.password)})
         db.commit()
 
+    if request.device_token is not None:
+        user.update({'device_token': request.device_token})
+        db.commit()
+
     user = user.first()
     employee = employee.first()
     job_title = job_title_repo.retrieve(db, employee.job_title_id)
@@ -285,6 +290,7 @@ def update(db: Session, request: ProfileRequest, authorize: AuthJWT):
         color=employee.color,
         is_verified=user.is_verified,
         is_active=user.is_active,
+        device_token=user.device_token,
         created_at=employee.created_at,
         updated_at=employee.updated_at
     )

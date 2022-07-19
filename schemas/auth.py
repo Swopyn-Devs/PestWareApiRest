@@ -56,6 +56,7 @@ class UserResponse(BaseModel):
     signature: Optional[str] = None
     color: Optional[str] = None
     is_verified: bool
+    device_token: Optional[str] = None
     is_active: bool
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
@@ -65,6 +66,7 @@ class ProfileRequest(BaseModel):
     name: Optional[str] = Field(description='Nombre del usuario.', max_length=255, example=ex_c_name)
     email: Optional[EmailStr] = Field(description='El correo debe ser único.', example='example@swopyn.com')
     password: Optional[str] = Field(title='Contraseña', max_length=255, min_length=8, example='1234567890')
+    device_token: Optional[str] = Field(title='Token Firebase')
 
 
 class VerifyAccountRequest(BaseModel):
