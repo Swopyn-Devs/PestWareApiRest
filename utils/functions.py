@@ -55,7 +55,7 @@ def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, 
             if model2 != False:
                 data_model = get_data(db, model2[0], data2[field], model2[1], False, False, True, True, 1)
                 if field == 'customer_id':
-                        data_model = customer.response_customer(db, data_model)
+                    data_model = customer.response_customer(db, data_model, True)
                 data_main[aux] = update_field(data_main[aux], field, data_model)
         aux += 1
     data = data_main
