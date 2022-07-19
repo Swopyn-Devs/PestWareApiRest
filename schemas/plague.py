@@ -35,7 +35,7 @@ class PlagueResponse(BaseModel):
 class PlagueBasicResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
     name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
-    plague_category_id: Union[PlagueCategoryResponse, PlagueCategoryBasicResponse]
+    plague_category_id: UUID4
     job_center_id: UUID4
 
     class Config:
