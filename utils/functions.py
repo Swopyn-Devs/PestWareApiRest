@@ -39,11 +39,11 @@ import io
 def get_all_data(db, model, authorize, paginate_param, filter_job_center=False, filters=False):
     if filter_job_center:
         employee = get_employee_id_by_token(db, authorize)
-        data = db.query(model).filter(model.job_center_id == employee.job_center_id).filter(model.is_deleted == False).all()
+        data = db.query(model).filter(model.job_center_id == employee.job_center_id).filter(model.is_deleted == False).order_by(model.created_at).all()
     else:
         query = db.query(model).filter(model.is_deleted == False)
         query = add_filters(model, query, filters)
-        data = query.all()
+        data = query.order_by(model.created_at).all()
 
     # set data model to foreign field
     aux = 0
@@ -132,7 +132,7 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                                 detail=detail_message(model_name, model_id))
 
-    data = query.all()
+    data = query.order_by(model.created_at).all()
 
     # set data model to foreign field
     if foreign:
