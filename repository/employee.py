@@ -175,9 +175,9 @@ def upload_photo_test(photo: UploadFile):
 
     # Upload file to AWS S3
     if not aws.upload_image(config('AWS_S3_BUCKET_TESTS'), key, photo):
-        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_updated('de la foto de prueba.'))
+        {'is_uploaded': False, 'data': None}
 
-    return {'detail': 'Foto subida correctamente.', 'data': f"{config('AWS_S3_URL_TESTS')}/{key}"}
+    return {'is_uploaded': True, 'data': f"{config('AWS_S3_URL_TESTS')}/{key}"}
 
 
 def validate_image(image):
