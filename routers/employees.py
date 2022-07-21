@@ -3,7 +3,7 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi_pagination import Page
 from pydantic import UUID4
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 
 from database import get_db
 from repository import employee
@@ -74,6 +74,6 @@ async def destroy(employee_id: UUID4, db: Session = Depends(get_db), authorize: 
 
 
 @router.patch('/upload_photo_test', status_code=status.HTTP_202_ACCEPTED)
-async def update_photo_test( file: UploadFile, authorize: AuthJWT = Depends()):
+async def update_photo_test( files: List[UploadFile], authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return employee.upload_photo_test(file)
+    return employee.upload_photo_test(files)

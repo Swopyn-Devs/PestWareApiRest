@@ -16,6 +16,7 @@ from services import aws
 from utils.hashing import Hash
 from services import mail
 from utils.functions import *
+from typing import List
 
 model_name = 'empleado'
 
@@ -168,16 +169,20 @@ def map_s3_url(employee: Employee):
     return employee
 
 
-def upload_photo_test(photo: UploadFile):
-    validate_image(photo)
-    name = str(uuid.uuid4())
-    key = f'mobile/{name}.jpeg'
+def upload_photo_test(photos: List[UploadFile]):
+    data = []
+    for photo in photos:
+        validate_image(photo)
+        name = str(uuid.uuid4())
+        key = f'mobile/{name}.jpeg'
 
-    # Upload file to AWS S3
-    if not aws.upload_image(config('AWS_S3_BUCKET_TESTS'), key, photo):
-        {'is_uploaded': False, 'data': None}
-
-    return {'is_uploaded': True, 'data': f"{config('AWS_S3_URL_TESTS')}/{key}"}
+        # Upload file to AWS S3
+        if not aws.upload_image(config('AWS_S3_BUCKET_TESTS'), key, photo):
+            data.append({'photo': photo.filename, 'is_uploaded': False, 'data': None})
+        else:
+            data.append({'photo': photo.filename, 'is_uploaded': True, 'data': f"{config('AWS_S3_URL_TESTS')}/{key}"})
+        
+    return data
 
 
 def validate_image(image):
