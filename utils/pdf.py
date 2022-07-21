@@ -4,7 +4,7 @@ import jinja2
 import pdfkit
 
 
-def create_pdf(template_path: str, data: dict, css_path: str, name_file: str):
+def create_pdf(template_path: str, data, css_path: str, name_file: str):
     template_name = template_path.split('/')[-1]
     template_path = template_path.replace(template_name, '')
 
@@ -24,11 +24,12 @@ def create_pdf(template_path: str, data: dict, css_path: str, name_file: str):
     config = pdfkit.configuration(wkhtmltopdf='/usr/bin/wkhtmltopdf')
 
     pdf = pdfkit.from_string(html, False, css=css_path, options=options, configuration=config)
+    return pdf
 
-    with tempfile.NamedTemporaryFile(mode='w+b', suffix='.pdf', delete=False) as TPDF:
+    """ with tempfile.NamedTemporaryFile(mode='w+b', suffix='.pdf', delete=False) as TPDF:
         TPDF.write(pdf)
         return FileResponse(
-                TPDF.name,
-                media_type='application/pdf',
-                filename=f'{name_file}.pdf'
-            )
+            TPDF.name,
+            media_type='application/pdf',
+            filename=f'{name_file}.pdf'
+        ) """

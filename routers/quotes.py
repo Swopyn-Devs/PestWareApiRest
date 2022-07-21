@@ -133,7 +133,8 @@ async def reject(quote_id: UUID4, request: QuoteRejectRequest, db: Session = Dep
 
 
 @router.get('/{quote_id}/pdf', status_code=status.HTTP_202_ACCEPTED)
-async def download(quote_id: UUID4, db: Session = Depends(get_db)):
+async def download(quote_id: UUID4, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
     return quote.download_pdf(db, quote_id)
 
 

@@ -1,6 +1,10 @@
 from models.tax import Tax
 from utils.functions import *
 from utils import folios, pdf
+from services import aws
+
+from decouple import config
+from datetime import datetime
 
 from pydantic import UUID4
 from sqlalchemy.orm import Session
@@ -8,6 +12,8 @@ from fastapi_jwt_auth import AuthJWT
 from fastapi import HTTPException, status
 
 from models.quote import Quote
+from models.plague import Plague
+from models.quote_plague import QuotePlague
 from models.service_type import ServiceType
 from models.customer import Customer
 from models.origin_source import OriginSource
@@ -72,6 +78,7 @@ def create(db: Session, request: QuoteRequest, authorize: AuthJWT):
         job_center_id=employee.job_center_id
     )
     last_id = insert_data(db, request_data)
+    create_or_update_pdf(db, last_id)
     return get_data(db, Quote, last_id, model_name)
 
 
@@ -87,6 +94,8 @@ def update(db: Session, request: QuoteUpdateRequest, model_id: UUID4):
         get_data(db, Discount, request.discount_id, 'descuento')
     if request.price_list_id is not None:
         get_data(db, PriceList, request.price_list_id, 'lista de precio')
+
+    create_or_update_pdf(db, model_id)
 
     return update_data(db, Quote, model_id, model_name, request.dict())
 
@@ -105,11 +114,49 @@ def reject(db: Session, request: QuoteRejectRequest, model_id: UUID4):
 
 
 def download_pdf(db: Session, model_id: UUID4):
+    get_data(db, Quote, model_id, 'cotizacion')
     quote: Quote = db.query(Quote).filter(Quote.id == model_id).first()
+    key = f'quotes/{quote.id}.pdf'
+
+    create_or_update_pdf(db, model_id)
+
+    return {'pdf': f"{config('AWS_S3_URL_QUOTES')}/{key}"}
+
+
+def create_or_update_pdf(db: Session, quote_id: UUID4):
+    quote: Quote = db.query(Quote).filter(Quote.id == quote_id).first()
+    service_type = get_data(db, ServiceType, quote.service_type_id, 'tipo de servicio')
+    customer = get_data(db, Customer, quote.customer_id, 'cliente')
+    employee = get_data(db, Employee, quote.employee_id, 'empleado')
+    job_center = get_data(db, JobCenter, quote.job_center_id, 'centro de trabajo')
+    plagues_id = db.query(QuotePlague).filter(QuotePlague.quote_id == quote_id).all()
+    plagues = []
+    for element in plagues_id:
+        plague = db.query(Plague).filter(Plague.id == element.plague_id).first()
+        plagues.append(plague.name)
 
     template = 'templates/pdfs/quote/template.html'
     css = 'templates/pdfs/quote/template.css'
-    return pdf.create_pdf(template, quote.__dict__, css, quote.folio)
+    key = f'quotes/{quote.id}.pdf'
+
+    # Generate data
+    quote.subtotal = "${:,.2f}".format(quote.subtotal)
+    quote.discount = "${:,.2f}".format(quote.discount)
+    quote.extra = "${:,.2f}".format(quote.extra)
+    quote.tax = "${:,.2f}".format(quote.tax)
+    quote.total = "${:,.2f}".format(quote.total)
+    plagues = joined_string = ", ".join(plagues)
+    quote.created_at = quote.created_at.strftime("%d-%m-%Y - %H:%M:%S")
+
+    data = {'quote': quote, 'service_type': service_type, 'customer': customer, 'employee': employee, 'job_center': job_center, 'plagues': plagues}
+
+    pdf_file = pdf.create_pdf(template, data, css, quote.id)
+
+    # Upload file to AWS S3
+    if not aws.upload_to_s3(config('AWS_S3_BUCKET_QUOTES'), key, pdf_file):
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_updated('el pdf de la cotizacion.'))
+
+    return {'pdf': f"{config('AWS_S3_URL_QUOTES')}/{key}"}
 
 
 def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):

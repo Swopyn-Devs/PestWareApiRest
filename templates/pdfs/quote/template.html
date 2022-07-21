@@ -18,9 +18,9 @@
           <p class="has-text-weight-light">AGENTE</p>
         </div>
         <div class="column">
-          <p class="has-text-weight-semibold">{{folio}}</p>
-          <p class="has-text-weight-semibold">12/5/2022 - 15:26:03</p>
-          <p class="has-text-weight-semibold">Alberto Martínez</p>
+          <p class="has-text-weight-semibold">{{quote.folio}}</p>
+          <p class="has-text-weight-semibold">{{quote.created_at}}</p>
+          <p class="has-text-weight-semibold">{{employee.name}}</p>
         </div>
       </div>
     </div>
@@ -31,14 +31,14 @@
             <span class="icon has-text-info">
               <i class="fab fa-facebook"></i>
             </span>
-            <span>MB Control de Plagas</span>
+            <span>{{job_center.facebook}}</span>
           </span>
           <br>
           <span class="icon-text">
             <span class="icon has-text-success">
               <i class="fab fa-whatsapp"></i>
             </span>
-            <span>(449) 415 7769</span>
+            <span>{{job_center.whatsapp}}</span>
           </span>
           <br>
           <span class="icon-text">
@@ -52,14 +52,14 @@
             <span class="icon has-text-warning">
               <i class="fas fa-envelope"></i>
             </span>
-            <span>contacto@mbcontroldepl.com.mx</span>
+            <span>{{job_center.email}}</span>
           </span>
           <br>
           <span class="icon-text">
             <span class="icon has-text-grey-dark">
               <i class="fas fa-globe-americas"></i>
             </span>
-            <span>www.mbcontroldeplagas.com.mx</span>
+            <span>{{job_center.web_page}}</span>
           </span>
         </div>
         <div class="column">
@@ -73,20 +73,20 @@
     <div class="columns">
       <div class="column">
         <article class="tile is-child notification is-primary-light">
-          <p class="has-text-weight-semibold">ECO FUMIGACIONES ECOLOGICAS S.A. DE C.V.</p>
-          <p class="has-text-weight-normal">MARA951230H6</p>
-          <p class="has-text-weight-normal">449 413 9091</p>
-          <p class="has-text-weight-normal">contacto@ecofumigaciones.com.mx</p>
+          <p class="has-text-weight-semibold">{{job_center.business_name}}</p>
+          <p class="has-text-weight-normal">{{job_center.taxpayer_registration}}</p>
+          <p class="has-text-weight-normal">{{job_center.license_number}}</p>
+          <p class="has-text-weight-normal">{{job_center.phone}}</p>
           <p class="has-text-weight-normal">Sierra de la Canela #114, Bosques del Prado Norte, Aguascalientes, Ags.</p>
         </article>
       </div>
       <div class="column">
         <article class="tile is-child notification is-primary-light">
-          <p class="has-text-weight-semibold">PASTEURIZADORA AGUASCALIENTES SA DE CV</p>
-          <p class="has-text-weight-normal">PAG840101GL9</p>
-          <p class="has-text-weight-normal">449 910 8300</p>
-          <p class="has-text-weight-normal">ventas@pasteurizadorasanmarcos.mx</p>
-          <p class="has-text-weight-normal">BLVD A ZACATECAS # KM 537.8, AGUASCALIENTES, AGUASCALIENTES 20116.</p>
+          <p class="has-text-weight-semibold">{{customer.name}}</p>
+          <p class="has-text-weight-normal">{{customer.contact_name}}</p>
+          <p class="has-text-weight-normal">{{customer.phone}}</p>
+          <p class="has-text-weight-normal">{{customer.email}}</p>
+          <p class="has-text-weight-normal">{{customer.address}}</p>
         </article>
       </div>
     </div>
@@ -165,8 +165,8 @@
               <p class="has-text-weight-light">TIPO DE PLAGAS</p>
             </div>
             <div class="column">
-              <p class="has-text-weight-semibold">Industria de Alimentos</p>
-              <p class="has-text-weight-semibold">Cucaracha Alemana, Moscas, Ratas y Ratones.</p>
+              <p class="has-text-weight-semibold">{{service_type.name}}</p>
+              <p class="has-text-weight-semibold">{{plagues}}</p>
             </div>
           </div>
         </article>
@@ -180,10 +180,10 @@
             <p class="has-text-weight-light is-size-5">Impuesto</p>
           </div>
           <div class="column has-text-right mr-5">
-            <p class="has-text-weight-semibold is-size-5">$5,700.36</p>
-            <p class="has-text-weight-semibold is-size-5 has-text-primary">$0.00</p>
-            <p class="has-text-weight-semibold is-size-5 has-text-danger">$0.00</p>
-            <p class="has-text-weight-semibold is-size-5">$1563.92</p>
+            <p class="has-text-weight-semibold is-size-5">{{quote.subtotal}}</p>
+            <p class="has-text-weight-semibold is-size-5 has-text-primary">{{quote.discount}}</p>
+            <p class="has-text-weight-semibold is-size-5 has-text-danger">{{quote.extra}}</p>
+            <p class="has-text-weight-semibold is-size-5">{{quote.tax}}</p>
           </div>
         </div>
       </div>
@@ -205,7 +205,7 @@
             <p class="has-text-weight-semibold is-size-5">Total</p>
           </div>
           <div class="column has-text-right mr-5">
-            <p class="has-text-weight-bold is-size-4">$1563.92</p>
+            <p class="has-text-weight-bold is-size-4">{{quote.total}}</p>
           </div>
         </div>
       </div>
