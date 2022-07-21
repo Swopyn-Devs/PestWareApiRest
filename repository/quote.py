@@ -118,8 +118,6 @@ def download_pdf(db: Session, model_id: UUID4):
     quote: Quote = db.query(Quote).filter(Quote.id == model_id).first()
     key = f'quotes/{quote.id}.pdf'
 
-    create_or_update_pdf(db, model_id)
-
     return {'pdf': f"{config('AWS_S3_URL_QUOTES')}/{key}"}
 
 
@@ -140,13 +138,13 @@ def create_or_update_pdf(db: Session, quote_id: UUID4):
     key = f'quotes/{quote.id}.pdf'
 
     # Generate data
-    quote.subtotal = "${:,.2f}".format(quote.subtotal)
-    quote.discount = "${:,.2f}".format(quote.discount)
-    quote.extra = "${:,.2f}".format(quote.extra)
-    quote.tax = "${:,.2f}".format(quote.tax)
-    quote.total = "${:,.2f}".format(quote.total)
+    quote.subtotal_f = "${:,.2f}".format(quote.subtotal)
+    quote.discount_f = "${:,.2f}".format(quote.discount)
+    quote.extra_f = "${:,.2f}".format(quote.extra)
+    quote.tax_f = "${:,.2f}".format(quote.tax)
+    quote.total_f = "${:,.2f}".format(quote.total)
     plagues = joined_string = ", ".join(plagues)
-    quote.created_at = quote.created_at.strftime("%d-%m-%Y - %H:%M:%S")
+    quote.created_at_f = quote.created_at.strftime("%d-%m-%Y - %H:%M:%S")
 
     data = {'quote': quote, 'service_type': service_type, 'customer': customer, 'employee': employee, 'job_center': job_center, 'plagues': plagues}
 

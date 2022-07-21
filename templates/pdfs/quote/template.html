@@ -19,7 +19,7 @@
         </div>
         <div class="column">
           <p class="has-text-weight-semibold">{{quote.folio}}</p>
-          <p class="has-text-weight-semibold">{{quote.created_at}}</p>
+          <p class="has-text-weight-semibold">{{quote.created_at_f}}</p>
           <p class="has-text-weight-semibold">{{employee.name}}</p>
         </div>
       </div>
@@ -180,10 +180,10 @@
             <p class="has-text-weight-light is-size-5">Impuesto</p>
           </div>
           <div class="column has-text-right mr-5">
-            <p class="has-text-weight-semibold is-size-5">{{quote.subtotal}}</p>
-            <p class="has-text-weight-semibold is-size-5 has-text-primary">{{quote.discount}}</p>
-            <p class="has-text-weight-semibold is-size-5 has-text-danger">{{quote.extra}}</p>
-            <p class="has-text-weight-semibold is-size-5">{{quote.tax}}</p>
+            <p class="has-text-weight-semibold is-size-5">{{quote.subtotal_f}}</p>
+            <p class="has-text-weight-semibold is-size-5 has-text-primary">{{quote.discount_f}}</p>
+            <p class="has-text-weight-semibold is-size-5 has-text-danger">{{quote.extra_f}}</p>
+            <p class="has-text-weight-semibold is-size-5">{{quote.tax_f}}</p>
           </div>
         </div>
       </div>
@@ -205,7 +205,7 @@
             <p class="has-text-weight-semibold is-size-5">Total</p>
           </div>
           <div class="column has-text-right mr-5">
-            <p class="has-text-weight-bold is-size-4">{{quote.total}}</p>
+            <p class="has-text-weight-bold is-size-4">{{quote.total_f}}</p>
           </div>
         </div>
       </div>
