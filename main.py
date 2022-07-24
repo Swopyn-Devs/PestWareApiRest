@@ -69,6 +69,7 @@ admin.register_model(models.TypeAdmin)
 admin.register_model(models.ServiceTypeAdmin)
 admin.register_model(models.SupplierAdmin)
 admin.register_model(models.UnitAdmin)
+admin.register_model(models.EventTypeAdmin)
 
 
 @AuthJWT.load_config

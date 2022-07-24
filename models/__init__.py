@@ -37,3 +37,4 @@ from models.quote_plague import *
 from models.quote_tracing import *
 from models.customer_portal_account import *
 from models.business_activity import *
+from models.event_type import *
