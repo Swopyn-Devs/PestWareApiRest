@@ -34,6 +34,7 @@ class CustomerRequestUpdated(BaseModel):
     address: Optional[str]
     address_latitude: Optional[float] = None
     address_longitude: Optional[float] = None
+    business_activity_id: Optional[UUID4] = None
 
     class Config:
         orm_mode = True
