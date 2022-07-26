@@ -35,6 +35,7 @@ from routers import quotes
 from routers import customer_portal_accounts
 from routers import business_activities
 from routers import event_types
+from routers import nesting_areas
 
 router = APIRouter()
 
@@ -73,3 +74,4 @@ router.include_router(suppliers.router)
 router.include_router(status_router.router)
 router.include_router(business_activities.router)
 router.include_router(event_types.router)
+router.include_router(nesting_areas.router)
