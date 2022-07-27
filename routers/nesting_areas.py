@@ -16,9 +16,9 @@ router = APIRouter(
 
 
 @router.get('', status_code=status.HTTP_200_OK, response_model=Page[NestingAreaResponse])
-async def index(paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def index(customer_id: Optional[UUID4] = Query(None), paginate: Optional[bool] = Query(None), db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
-    return nesting_area.get_all(db, authorize, paginate)
+    return nesting_area.get_all(db, authorize, paginate, customer_id)
 
 
 @router.get('/{nesting_area_id}', status_code=status.HTTP_200_OK, response_model=NestingAreaResponse)

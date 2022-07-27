@@ -72,7 +72,7 @@ class EventTypeResponse(BaseModel):
     folio_key_setting: str
     folio_init_setting: int
     is_service_order: bool
-    job_center: Union[JobCenterResponse, JobCenterBasicResponse]
+    job_center_id: Union[JobCenterResponse, JobCenterBasicResponse]
     
     class Config:
         orm_mode = True
@@ -98,7 +98,7 @@ class EventTypeBasicResponse(BaseModel):
     folio_key_setting: str
     folio_init_setting: int
     is_service_order: bool
-    job_center: UUID4
+    job_center_id: UUID4
     
     class Config:
         orm_mode = True

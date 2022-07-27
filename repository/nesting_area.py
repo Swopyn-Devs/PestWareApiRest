@@ -11,8 +11,11 @@ from schemas.nesting_area import NestingAreaRequest
 model_name = 'área de anidación'
 
 
-def get_all(db: Session, authorize: AuthJWT, paginate_param: bool):
-    return get_all_data(db, NestingArea, authorize, paginate_param, False)
+def get_all(db: Session, authorize: AuthJWT, paginate_param: bool, customer_id):
+    filters = False
+    if customer_id is not None:
+        filters = {'customer_id': customer_id}
+    return get_all_data(db, NestingArea, authorize, paginate_param, False, filters)
 
 
 def retrieve(db: Session, model_id: UUID4):

@@ -26,3 +26,12 @@ class InfestationDegreeResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class InfestationDegreeBasicResponse(BaseModel):
+    id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
+    name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    job_center_id: UUID4
+
+    class Config:
+        orm_mode = True

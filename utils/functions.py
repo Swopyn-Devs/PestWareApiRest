@@ -28,6 +28,12 @@ from models.quote_concept import QuoteConcept
 from models.quote_extra import QuoteExtra
 from models.rejection_reason import RejectionReason
 from models.cancellation_reason import CancellationReason
+from models.nesting_area import NestingArea
+from models.mip_inspection_form import MIPInspectionForm
+from models.mip_inspection_form_plague import MIPInspectionFormPlague
+from models.mip_inspection_form_photo import MIPInspectionFormPhoto
+from models.event_type import EventType
+from models.infestation_degree import InfestationDegree
 
 from repository import customer
 
@@ -105,6 +111,11 @@ def update_delete(db, model, model_id, model_name, filters=False):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=db_error())
 
     return {'detail': delete_message(model_name)}
+
+
+def delete_record(db, model, model_id):
+    db.query(model).filter(model.id == model_id).delete()
+    db.commit()
 
 
 def get_data(db, model, model_id=False, model_name=False, to_update=False, filters=False, is_deleted=True, foreign=True, primary_field=0):
@@ -189,6 +200,13 @@ def validate_pdf(file):
     if file.content_type not in allowed_types:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
                             detail='El archivo debe ser de tipo PDF: (.pdf).')
+
+
+def validate_image(file):
+    allowed_types = ['image/jpeg', 'image/jpg']
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                            detail='La archivo debe ser de tipo imagen: (.jpg o .jpeg).')
 
 
 def encode_base64(data):
@@ -277,6 +295,18 @@ def get_model(field_name_id):
         return [RejectionReason, 'motivo de rechazo']
     elif field_name_id == 'cancellation_reason_id':
         return [CancellationReason, 'motivo de cancelación']
+    elif field_name_id == 'nesting_area_id':
+        return [NestingArea, 'área de anidación']
+    elif field_name_id == 'mip_inspection_form_id':
+        return [MIPInspectionForm, 'formulario de inspección MIP']
+    elif field_name_id == 'mip_inspection_form_plague_id':
+        return [MIPInspectionFormPlague, 'formulario de inspección de plaga MIP']
+    elif field_name_id == 'mip_inspection_form_photo_id':
+        return [MIPInspectionFormPhoto, 'formulario de inspección de foto MIP']
+    elif field_name_id == 'event_id':
+        return [EventType, 'tipo de evento']
+    elif field_name_id == 'infestation_degree_id':
+        return [InfestationDegree, 'grado de infestación']
 
     return False
 
@@ -294,8 +324,6 @@ def update_field(data, field_name_id, data_model):
         data.employee_id = data_model
     elif field_name_id == 'origin_source_id':
         data.origin_source_id = data_model
-    elif field_name_id == 'country_id':
-        data.country_id = data_model
     elif field_name_id == 'job_title_id':
         data.job_title_id = data_model
     elif field_name_id == 'company_id':
@@ -332,5 +360,17 @@ def update_field(data, field_name_id, data_model):
         data.cancellation_reason_id = data_model
     elif field_name_id == 'extra_id':
         data.extra_id = data_model
+    elif field_name_id == 'nesting_area_id':
+        data.nesting_area_id = data_model
+    elif field_name_id == 'mip_inspection_form_id':
+        data.mip_inspection_form_id = data_model
+    elif field_name_id == 'mip_inspection_form_plague_id':
+        data.mip_inspection_form_plague_id = data_model
+    elif field_name_id == 'mip_inspection_form_photo_id':
+        data.mip_inspection_form_photo_id = data_model
+    elif field_name_id == 'event_id':
+        data.event_id = data_model
+    elif field_name_id == 'infestation_degree_id':
+        data.infestation_degree_id = data_model
 
     return data

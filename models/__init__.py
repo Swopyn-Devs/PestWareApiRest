@@ -39,3 +39,6 @@ from models.customer_portal_account import *
 from models.business_activity import *
 from models.event_type import *
 from models.nesting_area import *
+from models.mip_inspection_form import *
+from models.mip_inspection_form_plague import *
+from models.mip_inspection_form_photo import *
