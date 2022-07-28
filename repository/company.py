@@ -36,87 +36,52 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def update(db: Session, request: CompanyRequest, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id)
-    if not company.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
-    company.update(request.dict())
-    db.commit()
-
-    return company.first()
+    data = update_data(db, Company, company_id, model_name, request.dict())
+    return map_s3_url(data)
 
 
 def update_document_logo(db: Session, logo: UploadFile, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id)
-    if not company.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
+    key = f'document_logos/{company_id}.jpeg'
+    response_update = update_data(db, Company, company_id, model_name, {'document_logo': key})
     validate_image(logo)
 
     # Upload file to AWS S3
-    key = f'document_logos/{company_id}.jpeg'
     if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para documentos.')
 
-    company.update({'document_logo': key})
-    db.commit()
-
-    return map_s3_url(company.first())
+    return map_s3_url(response_update)
 
 
 def update_document_stamp(db: Session, logo: UploadFile, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id)
-    if not company.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
+    key = f'document_stamps/{company_id}.jpeg'
+    response_update = update_data(db, Company, company_id, model_name, {'document_stamp': key})
     validate_image(logo)
 
     # Upload file to AWS S3
-    key = f'document_stamps/{company_id}.jpeg'
     if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el sello para documentos.')
 
-    company.update({'document_stamp': key})
-    db.commit()
-
-    return map_s3_url(company.first())
+    return map_s3_url(response_update)
 
 
 def update_web_logo(db: Session, logo: UploadFile, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id)
-    if not company.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
+    key = f'web_logos/{company_id}.jpeg'
+    response_update = update_data(db, Company, company_id, model_name, {'web_logo': key})
     validate_image(logo)
 
     # Upload file to AWS S3
-    key = f'web_logos/{company_id}.jpeg'
     if not aws.upload_image(config('AWS_S3_BUCKET_COMPANIES'), key, logo):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f'No fue posible actualizar el logo para web.')
 
-    company.update({'web_logo': key})
-    db.commit()
-
-    return map_s3_url(company.first())
+    return map_s3_url(response_update)
 
 
 def update_web_color(db: Session, request: CompanyColorRequest, company_id: UUID4):
-    company = db.query(Company).filter(Company.id == company_id)
-    if not company.first():
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f'La empresa con el id {company_id} no está disponible.')
-
-    company.update({'web_color': request.web_color})
-    db.commit()
-
-    return map_s3_url(company.first())
+    response_update = update_data(db, Company, company_id, model_name, {'web_color': request.web_color})
+    return map_s3_url(response_update)
 
 
 def delete(db: Session, company_id: UUID4):
@@ -148,10 +113,3 @@ def map_s3_url(company: Company):
             company.web_logo = f"{config('AWS_S3_URL_COMPANIES')}/{company.web_logo}"
 
     return company
-
-
-def validate_image(image):
-    allowed_types = ['image/jpeg', 'image/jpg']
-    if image.content_type not in allowed_types:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
-                            detail='El avatar debe ser de tipo imagen: (.jpg o .jpeg).')

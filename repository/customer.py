@@ -5,6 +5,7 @@ from fastapi_pagination import paginate
 from fastapi_jwt_auth import AuthJWT
 from pydantic import UUID4
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 from models.job_center import JobCenter
 from models.customer import Customer
@@ -21,7 +22,7 @@ model_name = 'cliente'
 def get_all(db: Session, authorize: AuthJWT, is_main, main_customer, folio, name, is_active, contact):
     employee = functions.get_employee_id_by_token(db, authorize)
     data = []
-    customers = db.query(Customer).filter(Customer.job_center_id == employee.job_center_id).filter(Customer.is_deleted == False)
+    customers = db.query(Customer).filter(Customer.job_center_id == employee.job_center_id).filter(Customer.is_deleted == False).order_by(desc(Customer.created_at))
     if is_main is not None:
         customers = customers.filter(Customer.is_main == is_main)
     if main_customer is not None:
