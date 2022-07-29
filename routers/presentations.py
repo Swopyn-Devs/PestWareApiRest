@@ -11,7 +11,7 @@ from schemas.presentation import PresentationRequest, PresentationUpdateRequest,
 
 router = APIRouter(
     prefix='/presentations',
-    tags=['🧰 Presentaciones']
+    tags=['🧩 Presentaciones']
 )
 
 

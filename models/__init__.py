@@ -42,3 +42,6 @@ from models.nesting_area import *
 from models.mip_inspection_form import *
 from models.mip_inspection_form_plague import *
 from models.mip_inspection_form_photo import *
+from models.mip_condition_form import *
+from models.mip_condition_form_cleaning import *
+from models.mip_condition_form_photo import *

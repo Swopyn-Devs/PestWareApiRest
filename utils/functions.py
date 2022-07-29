@@ -32,8 +32,12 @@ from models.nesting_area import NestingArea
 from models.mip_inspection_form import MIPInspectionForm
 from models.mip_inspection_form_plague import MIPInspectionFormPlague
 from models.mip_inspection_form_photo import MIPInspectionFormPhoto
+from models.mip_condition_form import MIPConditionForm
+from models.mip_condition_form_cleaning import MIPConditionFormCleaning
+from models.mip_condition_form_photo import MIPConditionFormPhoto
 from models.event_type import EventType
 from models.infestation_degree import InfestationDegree
+from models.cleaning import Cleaning
 
 from repository import customer
 
@@ -307,6 +311,14 @@ def get_model(field_name_id):
         return [EventType, 'tipo de evento']
     elif field_name_id == 'infestation_degree_id':
         return [InfestationDegree, 'grado de infestación']
+    elif field_name_id == 'mip_condition_form_id':
+        return [MIPConditionForm, 'formulario de condición MIP']
+    elif field_name_id == 'mip_condition_form_cleaning_id':
+        return [MIPConditionFormCleaning, 'formulario de condición de plaga MIP']
+    elif field_name_id == 'mip_condition_form_photo_id':
+        return [MIPConditionFormPhoto, 'formulario de condición de foto MIP']
+    elif field_name_id == 'cleaning_id':
+        return [Cleaning, 'orden y limpieza']
 
     return False
 
@@ -372,5 +384,13 @@ def update_field(data, field_name_id, data_model):
         data.event_id = data_model
     elif field_name_id == 'infestation_degree_id':
         data.infestation_degree_id = data_model
+    elif field_name_id == 'mip_condition_form_id':
+        data.mip_condition_form_id = data_model
+    elif field_name_id == 'mip_condition_form_cleaning_id':
+        data.mip_condition_form_cleaning_id = data_model
+    elif field_name_id == 'mip_condition_form_photo_id':
+        data.mip_condition_form_photo_id = data_model
+    elif field_name_id == 'cleaning_id':
+        data.cleaning_id = data_model
 
     return data

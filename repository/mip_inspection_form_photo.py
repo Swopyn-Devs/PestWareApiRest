@@ -33,7 +33,7 @@ def create(db: Session, authorize: AuthJWT, photos: List[UploadFile], request: M
             photo=""
         )
         last_id = insert_data(db, request_data)
-        key = f'{model_id}/photos/{last_id}.jpeg'
+        key = f'inspections/{model_id}/photos/{last_id}.jpeg'
 
         if not aws.upload_image(config('AWS_S3_BUCKET_MIP_FORM'), key, photo):
             delete_record(db, MIPInspectionFormPhoto, last_id)
@@ -49,7 +49,7 @@ def update(db: Session, request: MIPInspectionFormPhotoRequest, model_id: UUID4)
 def delete(db: Session, model_id: UUID4):
     data = get_data(db, MIPInspectionFormPhoto, model_id, model_name)
     mip_inspection_form_id = data['mip_inspection_form_id']['id']
-    key = f'{mip_inspection_form_id}/photos/{model_id}.jpeg'
+    key = f'inspections/{mip_inspection_form_id}/photos/{model_id}.jpeg'
 
     if not aws.delete_file(config('AWS_S3_BUCKET_MIP_FORM'), key):
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=file_error_deleted('foto'))
