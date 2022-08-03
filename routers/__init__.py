@@ -38,6 +38,7 @@ from routers import event_types
 from routers import nesting_areas
 from routers import mip_inspection_form
 from routers import mip_condition_form
+from routers import mip_payment_form
 
 router = APIRouter()
 
@@ -79,3 +80,4 @@ router.include_router(event_types.router)
 router.include_router(nesting_areas.router)
 router.include_router(mip_inspection_form.router)
 router.include_router(mip_condition_form.router)
+router.include_router(mip_payment_form.router)
