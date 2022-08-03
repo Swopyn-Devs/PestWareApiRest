@@ -1,0 +1,20 @@
+title_id = 'ID'
+title_event_id = 'ID del tipo de evento'
+title_payment_method_id = 'ID del método de pago'
+title_payment_way_id = 'ID de la forma de pago'
+title_amount = 'Cantidad'
+title_status_id = 'ID del estatus'
+
+desc_id = 'ID del objeto.'
+desc_event_id = 'ID del objeto del tipo de evento.'
+desc_payment_method_id = 'ID del objeto del método de pago'
+desc_payment_way_id = 'ID del objeto de la forma de pago'
+desc_amount = 'La cantidad'
+desc_status_id = 'ID del objeto del estatus'
+
+ex_id = '86cfac91-80ce-4a24-817c-9e02b4fb7d40'
+ex_event_id = 'cc14f98f-9307-4b69-98ba-d33ed523c695'
+ex_payment_method_id = 'a6464325-36ea-43ed-a6f9-85f031cb2e75'
+ex_payment_way_id = 'e538a132-a0ce-4ba5-aaa5-e92d29070ab4'
+ex_amount = 0
+ex_status_id = 'adf0ee74-8809-4b20-baf7-8ccf08168164'

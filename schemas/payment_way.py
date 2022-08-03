@@ -29,3 +29,13 @@ class PaymentWayResponse(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class PaymentWayBasicResponse(BaseModel):
+    id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
+    name: str = Field(title=title_name, description=desc_name, max_length=255, min_length=3, example=ex_name)
+    credit_days: int = Field(title=title_credit_days, description=desc_credit_days, example=ex_credit_days)
+    job_center_id: UUID4
+
+    class Config:
+        orm_mode = True
