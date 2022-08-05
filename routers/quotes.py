@@ -12,7 +12,7 @@ from repository import quote_concept
 from repository import quote_extra
 from repository import quote_tracing
 from schemas.quote import QuoteApproveRequest, QuoteRejectRequest, QuoteRequest, QuoteUpdateRequest, QuoteResponse
-from schemas.quoter import QuoterRequest, QuoterResponse
+from schemas.quoter import QuoterRequest, QuoterResponse, CalculateConceptResponse, CalculateConceptRequest, QuoterConceptRequest
 from schemas.quote_plague import QuotePlagueRequest, QuotePlagueResponse
 from schemas.quote_concept import QuoteConceptRequest, QuoteConceptResponse
 from schemas.quote_extra import QuoteExtraRequest, QuoteExtraResponse
@@ -196,3 +196,15 @@ async def destroy_tracing(quote_tracing_id: UUID4, db: Session = Depends(get_db)
 async def quoter(request: QuoterRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return quote.quoter(db, authorize, request)
+
+
+@router.post('/calculate-concept', status_code=status.HTTP_200_OK, response_model=CalculateConceptResponse)
+async def calculate_concept(request: CalculateConceptRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote.calculate_concept(db, authorize, request)
+
+
+@router.post('/quoter-concept', status_code=status.HTTP_200_OK, response_model=QuoterResponse)
+async def quoter_concept(request: QuoterConceptRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+    authorize.jwt_required()
+    return quote.quoter_concept(db, authorize, request)

@@ -1,3 +1,4 @@
+from re import sub
 from models.tax import Tax
 from utils.functions import *
 from utils import folios, pdf
@@ -23,7 +24,7 @@ from models.price_list import PriceList
 from models.job_center import JobCenter
 from models.rejection_reason import RejectionReason
 from schemas.quote import QuoteApproveRequest, QuoteRejectRequest, QuoteRequest, QuoteUpdateRequest
-from schemas.quoter import QuoterRequest, QuoterResponse
+from schemas.quoter import QuoterRequest, QuoterResponse, QuoterConceptRequest, CalculateConceptRequest, CalculateConceptResponse
 
 model_name = 'cotización'
 
@@ -213,6 +214,77 @@ def quoter(db: Session, authorize: AuthJWT, request: QuoterRequest):
 
     return QuoterResponse(
         price_list=price_list_with_higher_hierarchy.id,
+        subtotal=subtotal,
+        extras=extras,
+        discount=discount,
+        tax=tax,
+        total=total
+    )
+    
+    
+def calculate_concept(db: Session, authorize: AuthJWT, request: CalculateConceptRequest):
+    employee = get_employee_id_by_token(db, authorize)
+    subtotal = 0
+    tax = 0
+    total = 0
+    
+    subtotal = request.quantity * request.unit_price
+    
+    if request.is_tax:
+        tax_main = db.query(Tax).filter(Tax.is_main == True).filter(Tax.job_center_id == employee.job_center_id).first()
+        if not tax_main:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Debes configurar un impuesto principal en el catalogo de impuestos.')
+        tax_main = tax_main.value / 100
+        tax = subtotal * tax_main
+
+    total = subtotal + tax
+
+    return CalculateConceptResponse(
+        subtotal=subtotal,
+        tax=tax,
+        total=total
+    )
+
+
+def quoter_concept(db: Session, authorize: AuthJWT, request: QuoterConceptRequest):
+    employee = get_employee_id_by_token(db, authorize)
+
+    subtotal = 0
+    tax = 0
+    discount = 0
+    extras = 0
+    total = 0
+    
+    if request.concepts:
+        if len(request.concepts) > 0:
+            for concept_quote in request.concepts:
+                subtotal = subtotal + concept_quote.subtotal
+
+    if request.extras_quote:
+        if len(request.extras_quote) > 0:
+            for extra_quote in request.extras_quote:
+                extra = db.query(Extra).filter(Extra.id == extra_quote.extra_id).first()
+                extras = extras + (extra.quantity * extra_quote.quantity)
+
+
+    if request.discount_id:
+        if request.discount_id is not None:
+            discount_db = db.query(Discount).filter(Discount.id == request.discount_id).first()
+            discount_db = discount_db.percentage / 100
+            discount = subtotal * discount_db
+
+
+    if request.is_tax:
+        tax_main = db.query(Tax).filter(Tax.is_main == True).filter(Tax.job_center_id == employee.job_center_id).first()
+        if not tax_main:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail='Debes configurar un impuesto principal en el catalogo de impuestos.')
+        tax_main = tax_main.value / 100
+        tax = ((subtotal + extras) - discount) * tax_main
+
+    total = (subtotal + tax + extras) - discount
+
+    return QuoterResponse(
+        price_list=None,
         subtotal=subtotal,
         extras=extras,
         discount=discount,
