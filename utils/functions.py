@@ -147,7 +147,8 @@ def get_data(db, model, model_id=False, model_name=False, to_update=False, filte
                 model2 = get_model(field)
                 if model2 != False:
                     data_model = get_data(db, model2[0], data2[field], model2[1], False, False, False, True, primary_field)
-                    if field == 'customer_id':
+                    if field == 'customer_id' and data_model is not None:
+                        print(data_model)
                         primary = True
                         if primary_field > 1:
                             primary = False

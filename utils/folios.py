@@ -1,6 +1,8 @@
 from fastapi import HTTPException, status
 from models.customer import Customer
 from models.quote import Quote
+from models.event import Event
+from models.event_type import EventType
 from pydantic import UUID4
 
 
@@ -39,4 +41,16 @@ def quote(db, job_center_id: UUID4) -> str:
         last_folio = int(last.folio.split('-')[1])
         last_folio += 1
         folio = f'C-{last_folio}'
+    return folio
+
+
+def event(db, job_center_id: UUID4, event_type_id: UUID4) -> str:
+    event_type = db.query(EventType).filter(EventType.id == event_type_id).first()
+    last = db.query(Event).filter(Event.job_center_id == job_center_id) \
+        .order_by(Event.created_at.desc()).first()
+    folio = f'{event_type.folio_key_setting}-{event_type.folio_init_setting}'
+    if last is not None:
+        last_folio = int(last.folio.split('-')[1])
+        last_folio += 1
+        folio = f'{event_type.folio_key_setting}-{last_folio}'
     return folio
