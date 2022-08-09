@@ -17,8 +17,6 @@ from utils.jwt import expires
 from utils.hashing import Hash
 
 
-
-from fastapi import HTTPException, status
 from fastapi_pagination import paginate
 from fastapi_jwt_auth import AuthJWT
 from pydantic import UUID4

@@ -11,7 +11,7 @@ from schemas.event_type import EventTypeRequest, EventTypeUpdateRequest, EventTy
 
 router = APIRouter(
     prefix='/event-types',
-    tags=['🏢 Tipos de evento']
+    tags=['🛍️ Tipos de evento']
 )
 
 
