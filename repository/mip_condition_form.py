@@ -4,7 +4,7 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 
-from models.event_type import EventType
+from models.event import Event
 from models.mip_condition_form import MIPConditionForm
 from schemas.mip_condition_form import MIPConditionFormRequest
 
@@ -20,7 +20,7 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def create(db: Session, request: MIPConditionFormRequest):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     request_data = MIPConditionForm(
         event_id=request.event_id,
         indications=request.indications,
@@ -32,7 +32,7 @@ def create(db: Session, request: MIPConditionFormRequest):
 
 
 def update(db: Session, request: MIPConditionFormRequest, model_id: UUID4):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     return update_data(db, MIPConditionForm, model_id, model_name, request.dict())
 
 

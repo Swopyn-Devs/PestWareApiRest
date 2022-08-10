@@ -120,6 +120,9 @@ def get_total_branches(db: Session, customer_id: UUID4):
 
 
 def response_customer(db, customer, basic=False, primary=True):
+    if customer is None:
+        return None
+
     if not primary:
         return customer
 

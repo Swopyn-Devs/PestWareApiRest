@@ -40,6 +40,7 @@ from routers import mip_inspection_form
 from routers import mip_condition_form
 from routers import mip_payment_form
 from routers import mip_signature_form
+from routers import events
 
 router = APIRouter()
 
@@ -77,6 +78,7 @@ router.include_router(price_lists.router)
 router.include_router(suppliers.router)
 router.include_router(status_router.router)
 router.include_router(business_activities.router)
+router.include_router(events.router)
 router.include_router(event_types.router)
 router.include_router(nesting_areas.router)
 router.include_router(mip_inspection_form.router)

@@ -1,7 +1,7 @@
 from typing import Optional, Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.mip_payment_form import *
-from schemas.event_type import EventTypeResponse, EventTypeBasicResponse
+from schemas.event import EventResponse, EventBasicResponse
 from schemas.payment_method import PaymentMethodResponse, PaymentMethodBasicResponse
 from schemas.payment_way import PaymentWayResponse, PaymentWayBasicResponse
 from schemas.status import StatusResponse
@@ -20,7 +20,7 @@ class MIPPaymentFormRequest(BaseModel):
 
 class MIPPaymentFormResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
-    event_id: Union[EventTypeResponse, EventTypeBasicResponse]
+    event_id: Union[EventResponse, EventBasicResponse]
     payment_method_id: Union[PaymentMethodResponse, PaymentMethodBasicResponse]
     payment_way_id: Union[PaymentWayResponse, PaymentWayBasicResponse]
     amount: Optional[float] = Field(title=title_amount, description=desc_amount, example=ex_amount)

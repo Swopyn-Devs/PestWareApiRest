@@ -1,7 +1,7 @@
 from typing import Union
 from pydantic import BaseModel, UUID4, Field
 from documentation.mip_signature_form import *
-from schemas.event_type import EventTypeResponse, EventTypeBasicResponse
+from schemas.event import EventResponse, EventBasicResponse
 
 
 class MIPSignatureFormRequest(BaseModel):
@@ -14,7 +14,7 @@ class MIPSignatureFormRequest(BaseModel):
 
 class MIPSignatureFormResponse(BaseModel):
     id: UUID4 = Field(title=title_id, description=desc_id, example=ex_id)
-    event_id: Union[EventTypeResponse, EventTypeBasicResponse]
+    event_id: Union[EventResponse, EventBasicResponse]
     signature: str = Field(title=title_signature, description=desc_signature, example=ex_signature)
     name: str = Field(title=title_name, description=desc_name, example=ex_name)
 

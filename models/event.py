@@ -44,3 +44,44 @@ class Event(Base):
     is_deleted = Column(Boolean, default=False)
     created_at = Column(DateTime(timezone=True), default=func.now())
     updated_at = Column(DateTime(timezone=True), default=func.now(), onupdate=func.now())
+
+
+class EventAdmin(ModelAdmin, model=Event):
+    column_searchable_list = [Event.title, Event.folio]
+    column_sortable_list = [Event.created_at]
+    column_list = [Event.id, Event.title, Event.folio, Event.job_center_id, Event.is_deleted, Event.created_at, Event.updated_at]
+    form_columns = [
+        Event.title,
+        Event.folio,
+        Event.event_type_id,
+        Event.initial_date,
+        Event.final_date,
+        Event.initial_hour,
+        Event.final_hour,
+        Event.real_initial_date,
+        Event.real_final_date,
+        Event.real_initial_hour,
+        Event.real_final_hour,
+        Event.start_latitude,
+        Event.start_longitude,
+        Event.end_latitude,
+        Event.end_longitude,
+        Event.quote_id,
+        Event.customer_id,
+        Event.employee_id,
+        Event.service_type_id,
+        Event.subtotal,
+        Event.discount,
+        Event.extra,
+        Event.tax,
+        Event.total,
+        Event.comments,
+        Event.mip_inspection_form_id,
+        Event.mip_condition_form_id,
+        Event.mip_control_form_id,
+        Event.mip_payment_form_id,
+        Event.mip_signature_form_id,
+        Event.status_id,
+        Event.job_center_id,
+        Event.is_deleted
+    ]

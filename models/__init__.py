@@ -48,3 +48,4 @@ from models.mip_condition_form_photo import *
 from models.mip_payment_form import *
 from models.mip_payment_form_photo import *
 from models.mip_signature_form import *
+from models.event import *

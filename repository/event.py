@@ -6,7 +6,7 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 
 from models.event import Event
-from schemas.event import EventRequest
+from schemas.event import EventRequest, EventUpdateRequest
 from utils import folios
 
 from utils.functions import *
@@ -45,7 +45,7 @@ def create(db: Session, request: EventRequest, authorize: AuthJWT):
     return get_data(db, Event, last_id, model_name)
 
 
-def update(db: Session, request: EventRequest, model_id: UUID4):
+def update(db: Session, request: EventUpdateRequest, model_id: UUID4):
     return update_data(db, Event, model_id, model_name, request.dict())
 
 

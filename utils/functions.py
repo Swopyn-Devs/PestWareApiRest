@@ -37,8 +37,10 @@ from models.mip_condition_form_cleaning import MIPConditionFormCleaning
 from models.mip_condition_form_photo import MIPConditionFormPhoto
 from models.mip_payment_form import MIPPaymentForm
 from models.mip_payment_form_photo import MIPPaymentFormPhoto
+from models.mip_signature_form import MIPSignatureForm
 from models.payment_method import PaymentMethod
 from models.payment_way import PaymentWay
+from models.event import Event
 from models.event_type import EventType
 from models.infestation_degree import InfestationDegree
 from models.cleaning import Cleaning
@@ -312,8 +314,10 @@ def get_model(field_name_id):
         return [MIPInspectionFormPlague, 'formulario de inspección de plaga MIP']
     elif field_name_id == 'mip_inspection_form_photo_id':
         return [MIPInspectionFormPhoto, 'formulario de inspección de foto MIP']
-    elif field_name_id == 'event_id':
+    elif field_name_id == 'event_type_id':
         return [EventType, 'tipo de evento']
+    elif field_name_id == 'event_id':
+        return [Event, 'evento']
     elif field_name_id == 'infestation_degree_id':
         return [InfestationDegree, 'grado de infestación']
     elif field_name_id == 'mip_condition_form_id':
@@ -324,10 +328,14 @@ def get_model(field_name_id):
         return [MIPConditionFormPhoto, 'formulario de condición de foto MIP']
     elif field_name_id == 'cleaning_id':
         return [Cleaning, 'orden y limpieza']
+    elif field_name_id == 'mip_control_form_id':
+        return [MIPPaymentForm, 'formulario de pago MIP']
     elif field_name_id == 'mip_payment_form_id':
         return [MIPPaymentForm, 'formulario de pago MIP']
     elif field_name_id == 'mip_payment_form_photo_id':
         return [MIPPaymentFormPhoto, 'formulario de pago de foto MIP']
+    elif field_name_id == 'mip_signature_form_id':
+        return [MIPSignatureForm, 'formulario de firma MIP']
     elif field_name_id == 'payment_method_id':
         return [PaymentMethod, 'método de pago']
     elif field_name_id == 'payment_way_id':
@@ -393,6 +401,8 @@ def update_field(data, field_name_id, data_model):
         data.mip_inspection_form_plague_id = data_model
     elif field_name_id == 'mip_inspection_form_photo_id':
         data.mip_inspection_form_photo_id = data_model
+    elif field_name_id == 'event_type_id':
+        data.event_type_id = data_model
     elif field_name_id == 'event_id':
         data.event_id = data_model
     elif field_name_id == 'infestation_degree_id':
@@ -405,10 +415,14 @@ def update_field(data, field_name_id, data_model):
         data.mip_condition_form_photo_id = data_model
     elif field_name_id == 'cleaning_id':
         data.cleaning_id = data_model
+    elif field_name_id == 'mip_control_form_id':
+        data.mip_control_form_id = data_model
     elif field_name_id == 'mip_payment_form_id':
         data.mip_payment_form_id = data_model
     elif field_name_id == 'mip_payment_form_photo_id':
         data.mip_payment_form_photo_id = data_model
+    elif field_name_id == 'mip_signature_form_id':
+        data.mip_signature_form_id = data_model
     elif field_name_id == 'payment_method_id':
         data.payment_method_id = data_model
     elif field_name_id == 'payment_way_id':
