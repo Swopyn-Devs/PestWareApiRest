@@ -4,7 +4,7 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 
-from models.event_type import EventType
+from models.event import Event
 from models.mip_inspection_form import MIPInspectionForm
 from schemas.mip_inspection_form import MIPInspectionFormRequest
 
@@ -20,7 +20,7 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def create(db: Session, request: MIPInspectionFormRequest):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     request_data = MIPInspectionForm(
         event_id=request.event_id,
         nesting_areas=request.nesting_areas,
@@ -31,7 +31,7 @@ def create(db: Session, request: MIPInspectionFormRequest):
 
 
 def update(db: Session, request: MIPInspectionFormRequest, model_id: UUID4):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     return update_data(db, MIPInspectionForm, model_id, model_name, request.dict())
 
 

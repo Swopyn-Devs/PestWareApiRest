@@ -7,7 +7,7 @@ from fastapi import UploadFile
 from decouple import config
 from services import aws
 
-from models.event_type import EventType
+from models.event import Event
 from models.mip_signature_form import MIPSignatureForm
 from schemas.mip_signature_form import MIPSignatureFormRequest
 
@@ -23,7 +23,7 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def create(db: Session, request: MIPSignatureFormRequest):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     request_data = MIPSignatureForm(
         event_id=request.event_id,
         signature='',
@@ -44,7 +44,7 @@ def update_signature(db: Session, photo: UploadFile, model_id: UUID4):
 
 
 def update(db: Session, request: MIPSignatureFormRequest, model_id: UUID4):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     return update_data(db, MIPSignatureForm, model_id, model_name, request.dict())
 
 

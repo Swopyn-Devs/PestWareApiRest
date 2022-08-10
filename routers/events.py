@@ -7,7 +7,7 @@ from typing import Optional
 
 from database import get_db
 from repository import event
-from schemas.event import EventRequest, EventResponse
+from schemas.event import EventRequest, EventUpdateRequest, EventResponse
 
 router = APIRouter(
     prefix='/events',
@@ -34,7 +34,7 @@ async def store(request: EventRequest, db: Session = Depends(get_db), authorize:
 
 
 @router.put('/{event_id}', status_code=status.HTTP_202_ACCEPTED, response_model=EventResponse)
-async def update(event_id: UUID4, request: EventRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
+async def update(event_id: UUID4, request: EventUpdateRequest, db: Session = Depends(get_db), authorize: AuthJWT = Depends()):
     authorize.jwt_required()
     return event.update(db, request, event_id)
 

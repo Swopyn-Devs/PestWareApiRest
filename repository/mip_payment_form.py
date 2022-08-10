@@ -4,7 +4,7 @@ from pydantic import UUID4
 from sqlalchemy.orm import Session
 from fastapi_jwt_auth import AuthJWT
 
-from models.event_type import EventType
+from models.event import Event
 from models.payment_method import PaymentMethod
 from models.payment_way import PaymentWay
 from models.status import Status
@@ -23,7 +23,7 @@ def retrieve(db: Session, model_id: UUID4):
 
 
 def create(db: Session, request: MIPPaymentFormRequest):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     get_data(db, PaymentMethod, request.payment_method_id, 'método de pago')
     get_data(db, PaymentWay, request.payment_way_id, 'forma de pago')
 
@@ -44,7 +44,7 @@ def create(db: Session, request: MIPPaymentFormRequest):
 
 
 def update(db: Session, request: MIPPaymentFormRequest, model_id: UUID4):
-    get_data(db, EventType, request.event_id, 'tipo de evento')
+    get_data(db, Event, request.event_id, 'evento')
     get_data(db, PaymentMethod, request.payment_method_id, 'método de pago')
     get_data(db, PaymentWay, request.payment_way_id, 'forma de pago')
 
